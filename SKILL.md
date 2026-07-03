@@ -80,6 +80,12 @@
     └── 输出：审查报告
     │
     ▼
+⑤ update-docs（自动展开）
+    ├── 更新接口文档（如果新增了 API / IPC 接口）
+    ├── 更新 CHANGELOG（如果完成了用户可见的功能）
+    └── 输出：文档更新清单
+    │
+    ▼
 回到 ①，进入下一个子任务
 ```
 
@@ -421,7 +427,31 @@ Step 6 — 健康检查
 
 ---
 
-## 附：接入指南
+## 第六章：涉及的文档类型与产出时机
+
+质量节拍覆盖以下文档类型，每种的产出时机和负责节点不同：
+
+| 文档类型 | 产出时机 | 负责层 | 文件位置示例 |
+|---------|---------|-------|------------|
+| **PRD** | Phase 开始前 / 需求变更时 | 规划阶段（手动编写） |  1-docs/PRD-*.md |
+| **架构设计文档** | 架构方案确定时 | 规划阶段（手动编写） |  1-docs/ARCH-*.md |
+| **迁移/实施计划** | Phase 开始前 | 规划阶段（手动编写） |  1-docs/*-plan.md |
+| **接口规范文档** | 新增/变更 API 或 IPC 时 | 日常循环⑤ update-docs | docs/api/ |
+| **ADR（架构决策记录）** | 阶段检查时 | 阶段检查③ documentation-and-adrs | docs/adr/ADR-xxx.md |
+| **CHANGELOG** | 每个用户可见功能完成时 | 日常循环⑤ update-docs | CHANGELOG.md |
+| **审查报告** | 每次 /review 完成后 | 日常循环④ /review | 输出到控制台或  1-docs/quality-reports/ |
+| **测试报告** | QA 阶段 | 特殊场景 /qa |  1-docs/quality-reports/test-*.md |
+| **发布说明** | 版本发布时 | 特殊场景 /document-release |  1-docs/release-notes/ |
+| **Learnings（经验记录）** | 踩坑或解决问题后 | 特殊场景 /learn | ~/.gstack/projects/ |
+| **用户手册 / README** | 功能交付时 + 阶段检查 | 阶段检查④ doc-review | README.md / docs/user-manual.md |
+| **健康检查报告** | 阶段检查时 | 阶段检查② /health |  1-docs/quality-reports/health-*.md |
+
+### 实际执行建议
+
+- **日常循环**：大部分时间你不会新建文档，只是在 update-docs 步骤更新 CHANGELOG 和接口文档。AI 会自动判断当前改动是否需要更新文档。
+- **阶段检查**：是补文档的关键节点。doc-review 步骤会扫描缺少的文档并提示你补充。
+- **一个原则**：如果改动了对外可见的行为（API 签名、IPC 协议、用户界面），就必须更新对应文档。"代码即文档"只在内部实现层面成立。
+
 
 ### 让 AI 识别这个 skill
 
@@ -445,3 +475,5 @@ Step 6 — 健康检查
 > - 日常循环：正在编码，4 步走完了吗？
 > - 阶段检查：Phase 快结束了，跑了验收吗？
 > - 特殊场景：当前状况触发映射表里的哪一条？
+
+
