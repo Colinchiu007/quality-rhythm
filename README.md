@@ -48,3 +48,13 @@
 - **日常循环（8 个）**：source-driven-dev, TDD, incremental-impl, /review 等
 - **阶段检查（3 个）**：verification-before-completion, /health, documentation-and-adrs
 - **特殊场景（26 个）**：/investigate, /cso, /guard, dispatching-parallel-agents 等
+
+## 一键安装到任意项目
+
+```bash
+npx degit Colinchiu007/quality-rhythm/installer .quality-rhythm
+node .quality-rhythm/run.js
+rm -rf .quality-rhythm
+```
+
+详情见 [installer/](./installer/)。
