@@ -49,7 +49,7 @@
 │  └── 0→1 方案输出 ──→ /create-plan, Feature List (功能点拆解+优先级)     │
 │                                                                         │
 │  Phase 1: 规划期 (Plan)                                                 │
-│  ├── 1.1 技术架构 ──→ /plan-eng-review, api-and-interface-design, 架构文档  │
+│  ├── 1.1 技术架构 ──→ /plan-eng-review, api-and-interface-design, 架构文档, DB设计文档  │
 │  ├── 1.2 设计评审 ──→ /plan-design-review, /design-review              │
 │  ├── 1.3 开发计划 ──→ planning-and-task-breakdown, writing-plans       │
 │  └── 1.4 DX 审查  ──→ /plan-devex-review, /plan-tune                   │
@@ -63,10 +63,11 @@
 │  Phase 3: 交付期 (Ship)                                                 │
 │  ├── 3.1 发布审查 ──→ /review (完整), /ship                            │
 │  ├── 3.2 灰度验证 ──→ /canary, /browse, pair-agent                    │
-│  ├── 3.3 发布上线 ──→ /land-and-deploy, ci-cd-and-automation           │
+│  ├── 3.3 发布上线 ──→ /land-and-deploy, ci-cd-and-automation, 部署手册   │
 │  ├── 3.4 文档同步 ──→ /document-release                                 │
 │  ├── 3.5 用户说明 ──→ User Manual / 使用说明                      │
-│  └── 3.6 决策归档 ──→ Decision Log (决策+理由+替代方案)            │
+│  ├── 3.6 决策归档 ──→ Decision Log (决策+理由+替代方案)            │
+│  └── 3.7 用户反馈 ──→ User Feedback (反馈收集+优先级评估)   │
 │                                                                         │
 │  Phase 4: 复盘期 (Retro)                                                │
 │  ├── 4.1 质量体检 ──→ /health                                           │
@@ -77,7 +78,9 @@
 │  ├── 5.1 问题排查 ──→ /investigate                                     │
 │  ├── 5.2 性能优化 ──→ /benchmark, performance-optimization             │
 │  ├── 5.3 可观测性 ──→ observability-and-instrumentation                │
-│  └── 5.4 安全运营 ──→ /cso (daily mode)                                │
+│  ├── 5.4 安全运营 ──→ /cso (daily mode)                                │
+│  ├── 5.5 运维手册 ──→ Operations Manual (运维指南+常见问题)       │
+│  └── 5.6 安全审计 ──→ Security Audit Report (定期审计报告)        │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -122,6 +125,7 @@ Phase 3.3 (上线) → /land-and-deploy → ci-cd-and-automation
 Phase 3.4 (文档) → /document-release → documentation-and-adrs
 Phase 3.5 (说明) → User Manual (使用说明)
 Phase 3.6 (归档) → Decision Log (决策日志)
+Phase 3.7 (反馈) → User Feedback (用户反馈记录)
 Phase 4.x (复盘) → /health → /retro → /learn
 Phase 5.x (运营) → /investigate → /benchmark → /cso
 ```
@@ -225,6 +229,7 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
     │   └── 🔴 Demo 代码 — 有硬编码？日志完整？
     ├── 自动修复 CRITICAL 问题
     │   └── 复杂问题 → 调用 questioning-code-review
+    ├── API 在线文档同步
     └── 输出：审查报告
     │
     ▼
@@ -1021,6 +1026,7 @@ L2 架构师最终审查 → merge
 质量节拍的每个 Phase 结束时，自动触发质量门禁检查：
 
 ```
+    [ ] 决策记录已更新（关键决策+理由）
 Phase 0 门禁：
   [ ] 需求边界清楚（/office-hours Phase 2.8）
   [ ] 至少 2 个技术方案对比
