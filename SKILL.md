@@ -46,13 +46,14 @@
 │  ├── 0.1 市场调研 ──→ /office-hours, /interview-me, idea-refine            │
 │  ├── 0.2 创意构想 ──→ /pm, /plan-ceo-review, design-consultation           │
 │  ├── 0.3 需求确认 ──→ /pm (PRD), /office-hours Phase 2.8, spec-driven-dev    │
-│  └── 0→1 方案输出 ──→ /create-plan                                        │
+│  └── 0→1 方案输出 ──→ /create-plan, Feature List (功能点拆解+优先级)     │
 │                                                                         │
 │  Phase 1: 规划期 (Plan)                                                 │
-│  ├── 1.1 技术架构 ──→ /plan-eng-review, api-and-interface-design       │
+│  ├── 1.1 技术架构 ──→ /plan-eng-review, api-and-interface-design, 架构文档  │
 │  ├── 1.2 设计评审 ──→ /plan-design-review, /design-review              │
 │  ├── 1.3 开发计划 ──→ planning-and-task-breakdown, writing-plans       │
 │  └── 1.4 DX 审查  ──→ /plan-devex-review, /plan-tune                   │
+│  ├── 1→2 测试计划 ──→ Test Plan (策略+范围+场景矩阵)              │
 │                                                                         │
 │  Phase 2: 开发期 (Build) — 进入日常循环                                  │
 │  ├── 2.1 编码     ──→ 日常循环 ⓪→①→②→③→④→⑤                          │
@@ -63,7 +64,9 @@
 │  ├── 3.1 发布审查 ──→ /review (完整), /ship                            │
 │  ├── 3.2 灰度验证 ──→ /canary, /browse, pair-agent                    │
 │  ├── 3.3 发布上线 ──→ /land-and-deploy, ci-cd-and-automation           │
-│  └── 3.4 文档同步 ──→ /document-release                                 │
+│  ├── 3.4 文档同步 ──→ /document-release                                 │
+│  ├── 3.5 用户说明 ──→ User Manual / 使用说明                      │
+│  └── 3.6 决策归档 ──→ Decision Log (决策+理由+替代方案)            │
 │                                                                         │
 │  Phase 4: 复盘期 (Retro)                                                │
 │  ├── 4.1 质量体检 ──→ /health                                           │
@@ -106,6 +109,8 @@ Phase 0.1 (调研) → /office-hours → /interview-me → idea-refine
 Phase 0.2 (构想) → /pm → /plan-ceo-review → design-consultation
 Phase 0.3 (需求) → /pm (PRD) → /office-hours Phase 2.8 → spec-driven-dev
 Phase 0→1 (方案) → /create-plan
+Phase 0→1 (功能) → Feature List (功能点列表)
+Phase 1→2 (测试) → Test Plan (测试计划)
 Phase 1.1 (架构) → /plan-eng-review → api-and-interface-design
 Phase 1.2 (设计) → /plan-design-review
 Phase 1.3 (计划) → /autoplan → planning-and-task-breakdown
@@ -113,6 +118,10 @@ Phase 1.4 (DX)   → /plan-devex-review
 Phase 2.x (开发) → 日常循环 ⓪→①→②→③→④→⑤
 Phase 3.1 (发布) → /review → /ship
 Phase 3.2 (灰度) → /canary → /browse → pair-agent
+Phase 3.3 (上线) → /land-and-deploy → ci-cd-and-automation
+Phase 3.4 (文档) → /document-release → documentation-and-adrs
+Phase 3.5 (说明) → User Manual (使用说明)
+Phase 3.6 (归档) → Decision Log (决策日志)
 Phase 4.x (复盘) → /health → /retro → /learn
 Phase 5.x (运营) → /investigate → /benchmark → /cso
 ```
@@ -219,10 +228,14 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
     └── 输出：审查报告
     │
     ▼
-⑤ 文档更新（文章：文档是第六层价值）
-    ├── 更新 CHANGELOG（用户可见功能变化）
-    ├── 更新接口文档（API/IPC 变更）
-    ├── 📋 技术债务记录
+⑤ 文档更新（文档是第六层价值）
+    ├── [诊断] 变更类型检查 => 自动匹配需更新的文档
+    ├── API 新增/修改 => 更新接口文档
+    ├── 架构/模块变更 => 更新架构文档
+    ├── 新增功能 => 更新使用说明
+    ├── DB 变更 => 更新数据库设计文档
+    ├── CHANGELOG 追加本次变更
+    ├── [技术债务] 记录本次技术债务
     └── 输出：文档更新清单
     │
     ▼
