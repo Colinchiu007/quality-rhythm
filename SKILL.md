@@ -41,10 +41,12 @@
 │                        质量节拍 全流程                                │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
-│  Phase 0: 探索期 (Explore)                                              │
-│  ├── 0.1 市场调研 ──→ /office-hours, idea-refine                        │
-│  ├── 0.2 创意构想 ──→ /plan-ceo-review, design-consultation             │
-│  └── 0.3 需求确认 ──→ /office-hours Phase 2.8, spec-driven-dev         │
+│  Phase 0: 探索期 (Explore)                                                │
+│  ├── 0.0 目标定义 ──→ /define-goal                                         │
+│  ├── 0.1 市场调研 ──→ /office-hours, /interview-me, idea-refine            │
+│  ├── 0.2 创意构想 ──→ /pm, /plan-ceo-review, design-consultation           │
+│  ├── 0.3 需求确认 ──→ /pm (PRD), /office-hours Phase 2.8, spec-driven-dev    │
+│  └── 0→1 方案输出 ──→ /create-plan                                        │
 │                                                                         │
 │  Phase 1: 规划期 (Plan)                                                 │
 │  ├── 1.1 技术架构 ──→ /plan-eng-review, api-and-interface-design       │
@@ -77,14 +79,14 @@
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 总计集成的 52 个 Skills
+### 总计集成的 57 个 Skills
 
 | 类别 | Skills |
 |------|--------|
-| **gstack 核心 (27)** | /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /plan-devex-review, /plan-tune, /autoplan, /review, /investigate, /retro, /learn, /ai-collaboration, /ship, /land-and-deploy, /canary, /cso, /guard, /freeze, /unfreeze, /qa, /qa-only, /design-review, /design-consultation, /design-html, /design-shotgun, /document-release, /health, /benchmark, /browse, /pair-agent, /codex, /careful |
+| **gstack 核心 (33)** | /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /plan-devex-review, /plan-tune, /autoplan, /review, /investigate, /retro, /learn, /ai-collaboration, /ship, /land-and-deploy, /canary, /cso, /guard, /freeze, /unfreeze, /qa, /qa-only, /design-review, /design-consultation, /design-html, /design-shotgun, /document-release, /health, /benchmark, /browse, /pair-agent, /codex, /careful, /pm, /define-goal, /create-plan, /interview-me, /auto-exec |
 | **Superpowers (11)** | subagent-driven-development, executing-plans, writing-plans, requesting-code-review, receiving-code-review, dispatching-parallel-agents, finishing-a-development-branch, systematic-debugging, root-cause-tracing, verification-before-completion, test-driven-development, testing-anti-patterns, condition-based-waiting, remembering-conversations, using-git-worktrees, brainstorming, defense-in-depth |
-| **Addy-Agent (14)** | planning-and-task-breakdown, spec-driven-development, incremental-implementation, code-review-and-quality, idea-refine, shipping-and-launch, ci-cd-and-automation, documentation-and-adrs, source-driven-development, doubt-driven-development, code-simplification, context-engineering, api-and-interface-design, frontend-ui-engineering, performance-optimization, observability-and-instrumentation, security-and-hardening, git-workflow-and-versioning, deprecation-and-migration |
-| **总计** | **52 个技能** |
+| **Addy-Agent (15)** | planning-and-task-breakdown, spec-driven-development, incremental-implementation, code-review-and-quality, idea-refine, shipping-and-launch, ci-cd-and-automation, documentation-and-adrs, source-driven-development, doubt-driven-development, code-simplification, context-engineering, api-and-interface-design, frontend-ui-engineering, performance-optimization, observability-and-instrumentation, security-and-hardening, git-workflow-and-versioning, deprecation-and-migration, interview-me |
+| **总计** | **57 个技能** |
 
 ---
 
@@ -99,9 +101,11 @@
 ```
 当前 Phase       AI 自动调用的 Skill 序列
 ──────────────────────────────────────────────────
-Phase 0.1 (调研) → /office-hours → idea-refine
-Phase 0.2 (构想) → /plan-ceo-review → design-consultation
-Phase 0.3 (需求) → /office-hours Phase 2.8 → spec-driven-dev
+Phase 0.0 (目标) → /define-goal
+Phase 0.1 (调研) → /office-hours → /interview-me → idea-refine
+Phase 0.2 (构想) → /pm → /plan-ceo-review → design-consultation
+Phase 0.3 (需求) → /pm (PRD) → /office-hours Phase 2.8 → spec-driven-dev
+Phase 0→1 (方案) → /create-plan
 Phase 1.1 (架构) → /plan-eng-review → api-and-interface-design
 Phase 1.2 (设计) → /plan-design-review
 Phase 1.3 (计划) → /autoplan → planning-and-task-breakdown
