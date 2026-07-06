@@ -1,600 +1,1075 @@
-﻿# 质量节拍
+# 质量节拍
 
-## 一句话定义
-
-> 开发质量不是靠检查清单堆出来的，是靠**固定节奏的日常循环**跑出来的。
-
----
-
-## 核心思想
-
-传统质量管理的误区是列一个长 checklist，结果永远记不住、永远执行不了。
-
-**质量节拍** 的解法是按"操作节奏"分层：
-
-```
-日常循环（每次写代码自动跑）→ 4 步，像呼吸一样自然
-阶段检查（每 Phase 结束触发） → 3 步，AI 提示你执行
-特殊场景（条件满足时激活）   → 按需触发，不需要你记
-```
-
-你只需要记住**日常循环的 4 步**，剩下的事 AI 会在对的时间自动做。
+> **开发质量不是靠检查清单堆出来的，是靠固定节奏的日常循环跑出来的。**
+>
+> **AI 编程不是自动写代码，而是辅助完整开发流程。** — 《Codex、ChatGPT 和程序员效率提升》
 
 ---
 
-## 第一章：起作用的方式
+## 核心理念：从文章出发
 
-### 1.1 三种触发机制
+### 文章核心观点
 
-质量节拍的技能不是靠你手动一个个调的，而是通过三种方式自动/半自动触发：
+> 代码生成只是第一层价值。AI 编程真正的价值，是辅助完整开发流程：
+>
+> **理解需求 → 拆解功能 → 设计接口 → 设计数据库 → 判断技术方案 → 编写代码 → 处理异常 → 补充测试 → 代码审查 → 写接口文档 → 上线前检查 → 复盘踩坑经验**
+
+这 12 步就是质量节拍要覆盖的全流程。每个步骤都可以从 52 个已集成的 skill 中找到对应的工具。
+
+### 文章的价值分层
 
 ```
-触发方式 A：日常循环（自动串行执行）
-  source-driven-dev → TDD → incremental-impl → /review
-  条件：任何编码 session 开始后自动激活
-  你做的事：告诉 AI "当前焦点"
-
-触发方式 B：AI 主动提示（阶段门禁）
-  verification-before-completion / /health / documentation-and-adrs
-  条件：子任务完成 / Phase 结束时 AI 自动检测到并提示
-  你做的事：说"好，跑一遍"或"跳过"
-
-触发方式 C：你的一句话（按需调用）
-  你说"出 bug 了" → AI 自动匹配 /investigate
-  你说"安全审计" → AI 自动匹配 /cso + /guard
-  你说"并行搞" → AI 自动匹配 dispatching-parallel-agents
-  24 个场景全覆盖，AI 从场景映射表里找
-  你做的事：用自然语言说出你的意图
+第七层：经验沉淀 ← /retro, /learn, /ai-collaboration (Pillar 4)
+第六层：文档整理 ← /document-release, documentation-and-adrs
+第五层：代码审查 ← /review, code-review-and-quality, /cso
+第四层：测试设计 ← TDD, /qa, testing-anti-patterns
+第三层：报错排查 ← /investigate, systematic-debugging
+第二层：代码理解 ← source-driven-dev, context-engineering, codex
+第一层：代码生成 ← incremental-impl, source-driven-dev
 ```
 
-### 1.2 日常循环的执行机制
+**质量节拍让 AI 自动帮你往上爬** — 每次日常循环，价值层自动上移一层。
 
-日常循环的 4 步不是独立技能，而是**嵌套执行**的关系：
+---
+
+## 第一章：全流程覆盖总图
+
+质量节拍将完整的开发流程划分为 5 个大阶段、13 个子阶段，覆盖从 0 到 1 的端到端交付。
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        质量节拍 全流程                                │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  Phase 0: 探索期 (Explore)                                              │
+│  ├── 0.1 市场调研 ──→ /office-hours, idea-refine                        │
+│  ├── 0.2 创意构想 ──→ /plan-ceo-review, design-consultation             │
+│  └── 0.3 需求确认 ──→ /office-hours Phase 2.8, spec-driven-dev         │
+│                                                                         │
+│  Phase 1: 规划期 (Plan)                                                 │
+│  ├── 1.1 技术架构 ──→ /plan-eng-review, api-and-interface-design       │
+│  ├── 1.2 设计评审 ──→ /plan-design-review, /design-review              │
+│  ├── 1.3 开发计划 ──→ planning-and-task-breakdown, writing-plans       │
+│  └── 1.4 DX 审查  ──→ /plan-devex-review, /plan-tune                   │
+│                                                                         │
+│  Phase 2: 开发期 (Build) — 进入日常循环                                  │
+│  ├── 2.1 编码     ──→ 日常循环 ⓪→①→②→③→④→⑤                          │
+│  ├── 2.2 集成测试 ──→ /qa, verification-before-completion              │
+│  └── 2.3 安全审查 ──→ /cso, /guard, /freeze                            │
+│                                                                         │
+│  Phase 3: 交付期 (Ship)                                                 │
+│  ├── 3.1 发布审查 ──→ /review (完整), /ship                            │
+│  ├── 3.2 灰度验证 ──→ /canary, /browse, pair-agent                    │
+│  ├── 3.3 发布上线 ──→ /land-and-deploy, ci-cd-and-automation           │
+│  └── 3.4 文档同步 ──→ /document-release                                 │
+│                                                                         │
+│  Phase 4: 复盘期 (Retro)                                                │
+│  ├── 4.1 质量体检 ──→ /health                                           │
+│  ├── 4.2 技术复盘 ──→ /retro                                            │
+│  └── 4.3 经验沉淀 ──→ /learn, /ai-collaboration (Pillar 4)             │
+│                                                                         │
+│  Phase 5: 运营期 (Operate)                                              │
+│  ├── 5.1 问题排查 ──→ /investigate                                     │
+│  ├── 5.2 性能优化 ──→ /benchmark, performance-optimization             │
+│  ├── 5.3 可观测性 ──→ observability-and-instrumentation                │
+│  └── 5.4 安全运营 ──→ /cso (daily mode)                                │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### 总计集成的 52 个 Skills
+
+| 类别 | Skills |
+|------|--------|
+| **gstack 核心 (27)** | /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /plan-devex-review, /plan-tune, /autoplan, /review, /investigate, /retro, /learn, /ai-collaboration, /ship, /land-and-deploy, /canary, /cso, /guard, /freeze, /unfreeze, /qa, /qa-only, /design-review, /design-consultation, /design-html, /design-shotgun, /document-release, /health, /benchmark, /browse, /pair-agent, /codex, /careful |
+| **Superpowers (11)** | subagent-driven-development, executing-plans, writing-plans, requesting-code-review, receiving-code-review, dispatching-parallel-agents, finishing-a-development-branch, systematic-debugging, root-cause-tracing, verification-before-completion, test-driven-development, testing-anti-patterns, condition-based-waiting, remembering-conversations, using-git-worktrees, brainstorming, defense-in-depth |
+| **Addy-Agent (14)** | planning-and-task-breakdown, spec-driven-development, incremental-implementation, code-review-and-quality, idea-refine, shipping-and-launch, ci-cd-and-automation, documentation-and-adrs, source-driven-development, doubt-driven-development, code-simplification, context-engineering, api-and-interface-design, frontend-ui-engineering, performance-optimization, observability-and-instrumentation, security-and-hardening, git-workflow-and-versioning, deprecation-and-migration |
+| **总计** | **52 个技能** |
+
+---
+
+## 第二章：三种触发机制（文章映射）
+
+文章说 **"让 AI 在正确的时间做正确的事"** — 质量节拍的三种触发方式就是它的实现。
+
+### 触发方式 A：全流程自动路由（新增）
+
+文章强调 **"ChatGPT 更适合想清楚，Codex 更适合改代码"** — 质量节拍根据当前 Phase 自动路由到合适的 skill：
+
+```
+当前 Phase       AI 自动调用的 Skill 序列
+──────────────────────────────────────────────────
+Phase 0.1 (调研) → /office-hours → idea-refine
+Phase 0.2 (构想) → /plan-ceo-review → design-consultation
+Phase 0.3 (需求) → /office-hours Phase 2.8 → spec-driven-dev
+Phase 1.1 (架构) → /plan-eng-review → api-and-interface-design
+Phase 1.2 (设计) → /plan-design-review
+Phase 1.3 (计划) → /autoplan → planning-and-task-breakdown
+Phase 1.4 (DX)   → /plan-devex-review
+Phase 2.x (开发) → 日常循环 ⓪→①→②→③→④→⑤
+Phase 3.1 (发布) → /review → /ship
+Phase 3.2 (灰度) → /canary → /browse → pair-agent
+Phase 4.x (复盘) → /health → /retro → /learn
+Phase 5.x (运营) → /investigate → /benchmark → /cso
+```
+
+**你做的事：** 只说 "Phase X" 或描述当前工作，AI 自动路由。
+
+### 触发方式 B：AI 主动提示（增强版）
+
+文章说 **"把踩坑经验沉淀成可复用的提示词/模板"** — AI 在检测到以下信号时主动提示：
+
+```
+信号                        AI 提示
+──────────────────────────────────────────────────
+你说了"有个想法"            → "需要跑一轮 /office-hours 吗？"
+任务描述模糊不清             → "需要先出 PRD 吗？"
+代码变更涉及数据库           → "检查了事务一致性吗？"
+引入了新依赖                → "安全检查跑了吗？"
+子任务完成                  → "要跑 /verification-before-completion 吗？"
+PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
+同类型问题出现 3 次以上     → "这个模式反复出现，试试 /learn skillify？"
+```
+
+### 触发方式 C：你的一句话（52 场景全覆盖）
+
+文章说 **"一次只做一件事"** — 你的自然语言触发 AI 自动匹配 skill：
+
+```
+你说                        AI 调用
+──────────────────────────────────────────────────
+"出 bug 了"                → /investigate + systematic-debugging
+"帮我想个方案"              → /office-hours → /plan-ceo-review
+"审查一下"                  → /review + code-review-and-quality
+"出安全审计"               → /cso + /guard
+"做性能测试"               → /benchmark
+"灰度发布"                 → /canary
+"上线"                     → /ship → /land-and-deploy
+"复盘一下"                 → /retro → /learn
+"检查质量"                 → /health
+"优化性能"                 → performance-optimization
+"做设计系统"               → design-consultation
+"写文档"                   → /document-release
+"做市场营销"               → /office-hours (builder mode)
+"产品需求不清楚"           → /office-hours Phase 2.8 + /ai-collaboration Pillar 1
+"不知道怎么用 AI"          → /ai-collaboration + /codex
+"团队协作"                 → dispatching-parallel-agents + subagent-driven-development
+```
+
+---
+
+## 第三章：日常循环增强版
+
+文章的核心方法论是 **"小步开发 — 一次只改一个模块 → 改完立刻测试 → AI 参与审查"**。质量节拍 的日常循环升级为 6 步，每一步都注入文章的洞察：
 
 ```
 你开始一个新子任务
     │
     ▼
 ⓪ pre-flight（自动检查）
-    ├── 子任务有明确的验收标准吗？       → 没有 → ❌ 提示先补验收标准
-    ├── 依赖的上下游功能已经就绪吗？     → 没有 → ❌ 标记为阻塞
-    ├── 需要先写 PRD 或架构文档吗？      → 需要 → ⚠️ 提示先出文档
-    ├── 依赖的 API Key / 环境已配置？    → 没有 → ⚠️ 提示配置
+    ├── 子任务有明确的验收标准吗？       → 没有 → ❌ 提示先补
+    ├── 依赖的上下游功能已经就绪吗？     → 没有 → ❌ 标记阻塞
+    ├── 需要先写 PRD 或架构文档吗？      → 需要 → ⚠️ 调用 /office-hours
+    ├── 需求边界清楚吗？                → 模糊 → ⚠️ 调用 /ai-collaboration Pillar 1
     │
     ▼
-① source-driven-dev（自动展开）
-    ├── 读取 OpenMontage 对应源码
-    ├── 提取所有函数签名和参数（spec-driven-dev 自动伴随）
-    └── 输出：接口对齐清单
+① 上下文检查 + source-driven-dev（文章：贴完整上下文）
+    ├── ①-a 上下文完整性自检
+    │   ├── 错误信息/堆栈完整？   → /investigate Step 0
+    │   ├── 相关代码已读取？      → context-engineering
+    │   └── 技术栈/版本已确认？   → source-driven-dev
+    ├── ①-b 读取相关源码
+    │   └── 提取关键接口签名（spec-driven-dev 自动伴随）
+    └── 输出：上下文就绪确认
     │
     ▼
-② TDD（自动展开）
+② AI 辅助测试场景脑暴（文章：让 AI 补测试 — 先想再写）
+    ├── 列出正常路径、异常路径、业务规则、幂等性场景
+    │   └── 使用 TDD Phase 0 模板
     ├── 先写测试（normal + error + edge）
-    ├── 检查测试质量：不 mock 行为、不 mock 第三方（testing-anti-patterns 自动伴随）
-    ├── 再写实现
-    └── 跑通测试
+    ├── 检查测试质量（testing-anti-patterns 自动伴随）
+    └── 输出：测试通过
     │
     ▼
-③ incremental-impl（持续约束）
-    ├── 检查：当前代码是否超出子任务边界？
-    ├── 检查：有没有未经拆解就"顺手"改的地方？
-    ├── 🔍 依赖审查（检测到 npm install / pip install 时触发）：
-    │   ├── 这个依赖真的需要吗？能用现有替代吗？
-    │   ├── 有已知的安全漏洞吗？
-    │   └── 锁定版本号（去掉 ^）
-    └── 输出：任务边界确认
+③ 增量实现（文章：小步+约束）
+    ├── 一次只实现一个模块
+    ├── 🔍 依赖审查
+    │   ├── 这个依赖真的需要吗？
+    │   ├── 有已知安全漏洞吗？
+    │   └── 锁定版本号
+    ├── 🔍 代码简化检查（code-simplification 自动伴随）
+    └── 输出：功能实现
     │
     ▼
-④ /review（自动展开）
-    ├── 扫描改动文件的 🔴/🟠/🟢 问题
-    ├── 🔴 错误处理审查：
-    │   ├── 新增函数有 try-catch 吗？
-    │   ├── async 函数有 .catch() 或 try-await 吗？
-    │   ├── 错误信息会传播到用户界面吗？
-    │   └── Python 桥接的错误会正确序列化回 JS 吗？
-    ├── 修复 CRITICAL 问题
+④ 上下文完整性审查（文章：审查 AI 输出是核心职责）
+    ├── 扫描改动文件
+    ├── 6 大专项检查（从 /review Step 3.75 继承）：
+    │   ├── 🔴 异常处理 — 每个新函数有 try-catch？错误不吞掉？
+    │   ├── 🔴 权限边界 — 新 API 有鉴权？现有鉴权被绕过？
+    │   ├── 🔴 事务一致性 — 多步写入能回滚？
+    │   ├── 🔴 边界值 — 空/零/最大值处理了？
+    │   ├── 🔴 代码风格 — 与项目一致？
+    │   └── 🔴 Demo 代码 — 有硬编码？日志完整？
+    ├── 自动修复 CRITICAL 问题
+    │   └── 复杂问题 → 调用 questioning-code-review
     └── 输出：审查报告
     │
     ▼
-⑤ update-docs（自动展开）
-    ├── 更新接口文档（如果新增了 API / IPC 接口）
-    ├── 更新 CHANGELOG（如果完成了用户可见的功能）
-    ├── 📋 技术债务记录（发现遗留问题但不在当前 scope）：
-    │   └── 写入 TODO.md 或 docs/tech-debt.md
+⑤ 文档更新（文章：文档是第六层价值）
+    ├── 更新 CHANGELOG（用户可见功能变化）
+    ├── 更新接口文档（API/IPC 变更）
+    ├── 📋 技术债务记录
     └── 输出：文档更新清单
+    │
+    ▼
+⑥ AI 协作质量检查（文章：AI 协作能力 — 新技能）
+    ├── 用 /ai-collaboration Pillar 3 checklist 自检
+    ├── 记录本次协作经验
+    └── 输出：协作质量评分
     │
     ▼
 回到 ①，进入下一个子任务
 ```
 
-**实际场景**：你坐在电脑前，对 AI 说"Phase 1 —— 增强 render-engine.js"，然后看到 AI 依次执行：
+---
+
+## 第四章：阶段检查扩展版（覆盖全流程）
+
+### Phase 0（探索期）阶段检查
 
 ```
-→ 我先读取 OpenMontage 的 video_compose.py 看看渲染引擎的接口设计...
-  （source-driven-dev 自动激活）
+[必] 需求完整性检查      → /office-hours Phase 2.8
+[必] 创意压力测试        → /plan-ceo-review
+[必] 竞品分析            → /office-hours (Landscape Awareness)
+[按需] 市场调研          → /browse + WebSearch
+[按需] 技术预研          → /plan-eng-review + api-and-interface-design
+```
 
-→ 提取到关键接口：render(composition, props, profile, outputFormat)
-  （spec-driven-dev 自动伴随）
+### Phase 1（规划期）阶段检查
 
-→ 现在写测试：
-  test('render accepts composition parameter')
-  test('render falls back to Explainer when composition omitted')
-  test('render rejects invalid composition name')
-  （TDD 自动激活）
+```
+[必] 架构审查            → /plan-eng-review
+[必] 设计审查            → /plan-design-review
+[必] DX 审查            → /plan-devex-review
+[必] 开发计划审查        → /autoplan
+[必] 任务粒度检查        → /autoplan Section 3.6
+[必] 测试/文档/审查阶段   → /autoplan Section 3.7
+```
 
-→ 测试通过了，实现简化完成，去掉了 OpenMontage 中不需要的 HyperFrames 路由
-  （code-simplification 自动伴随）
+### Phase 2（开发期）阶段检查
 
-→ 写完审查：
-  🔴 无
-  🟠 render.js:23 缺少 composition 参数类型校验
-  （/review 自动激活）
+```
+[必] 日常循环完整性      → 6 步都走了吗？
+[必] verification-before-completion
+[必] /health
+[按需] /cso（引入外部依赖时）
+[按需] /guard（碰生产环境时）
+[按需] /freeze（调试范围锁定时）
+```
 
-→ 进入下一个子任务：重构 CreateView.vue...
-  （回到日常循环起点）
+### Phase 3（交付期）阶段检查
+
+```
+[必] 完整 /review        → 含 Step 3.75 上下文自检 + 6 大专项
+[必] /qa                → 功能+视觉+响应式+可访问性+安全
+[必] /cso              → comprehensive mode
+[必] /ship              → 版本+CHANGELOG+PR
+[按需] /canary          → 灰度验证
+[按需] /browse          → dogfooding 验收
+[按需] /land-and-deploy → 发布
+[按需] /document-release → 文档同步
+```
+
+### Phase 4（复盘期）阶段检查
+
+```
+[必] /health             → 质量评分
+[必] /retro              → 技术复盘
+[必] /learn              → 经验沉淀
+[必] /ai-collaboration   → 协作能力总结
+[按需] /learn skillify   → 检查是否生成新 skill
+[按需] documentation-and-adrs → ADR 归档
+```
+
+### Phase 5（运营期）阶段检查
+
+```
+[按需] /investigate       → 问题排查
+[按需] /benchmark         → 性能基准
+[按需] /cso (daily)       → 日常安全检查
+[按需] observability-and-instrumentation → 监控
+[按需] performance-optimization → 性能优化
+[按需] security-and-hardening → 安全加固
 ```
 
 ---
 
-## 第二章：具体流程
+## 第五章：52 个技能的集成与映射
 
-### 2.1 完整 Session 流程
+### 5.1 gstack 核心技能（27 个）
 
-一个完整的编码 session 的实际流程（以 Phase 1 为例）：
+| Skill | 文章对应 | 在全流程中的位置 | 集成方式 |
+|-------|---------|-----------------|---------|
+| **/office-hours** | "让 AI 帮你想清楚" | Phase 0.1-0.3 | 自动触发于"我有想法"信号; Phase 2.8 需求边界探测 |
+| **/plan-ceo-review** | "方案比较" | Phase 0.2 | 办公室时间后自动串联 |
+| **/plan-eng-review** | "设计接口、判断技术方案" | Phase 1.1 | 架构设计阶段自动调用 |
+| **/plan-design-review** | "设计评审" | Phase 1.2 | 有 UI 范围时自动调用 |
+| **/plan-devex-review** | "开发者体验" | Phase 1.4 | 面向开发者的产品时调用 |
+| **/plan-tune** | "调整 AI 协作方式" | 所有 Phase | 全局配置，按需调用 |
+| **/autoplan** | "先拆功能再设计方案" | Phase 1.3 | 规划审查管道; Section 3.6 粒度 + 3.7 阶段 |
+| **/review** | "代码审查是核心职责" | Phase 2→④ / Phase 3.1 | 日常循环 Step ④; Step 3.75 自检 + 6 大专项 |
+| **/investigate** | "贴完整错误信息和上下文" | Phase 5.1 | 触发于"出 bug 了"; Step 0 上下文检查 + 连环追问 |
+| **/retro** | "技术复盘 = 做了什么→踩坑→经验" | Phase 4.2 | 技能提取 + learnings 沉淀 |
+| **/learn** | "把经验沉淀成模板" | Phase 4.3 | skillify 命令: learnings→skill |
+| **/ai-collaboration** | "AI 协作是新能力" | 所有 Phase | Pillar 1-4: 描述/上下文/审查/模板 |
+| **/ship** | "发布流程" | Phase 3.1 | 版本+CHANGELOG+PR |
+| **/land-and-deploy** | "上线" | Phase 3.3 | 合并+CI+部署+金丝雀 |
+| **/canary** | "灰度验证" | Phase 3.2 | 自动回滚 |
+| **/cso** | "安全考量" | Phase 2.3 / 3.1 / 5.4 | 综合模式+每日模式 |
+| **/guard** | "敏感信息保护" | Phase 2.3 | 范围锁定 |
+| **/freeze/unfreeze** | "调试范围锁定" | Phase 2→③ 时 | 按需 |
+| **/qa / qa-only** | "测试设计" | Phase 2.2 / 3.1 | 功能+视觉+响应式+可访问性+安全 |
+| **/design-review** | "设计审查" | Phase 1.2 | 对已有站点 |
+| **/design-consultation** | "设计系统" | Phase 0.2 | 新项目开始时 |
+| **/design-html** | "设计→代码" | Phase 2.1 | 设计实现 |
+| **/design-shotgun** | "快速视觉方案" | Phase 0.2 | 多方案探索 |
+| **/document-release** | "文档整理" | Phase 3.4 | README/架构/CHANGELOG 同步 |
+| **/health** | "质量检查" | Phase 4.1 | 加权评分+趋势 |
+| **/benchmark** | "性能基准" | Phase 5.2 | 多方案对比 |
+| **/browse** | "Web 浏览" | Phase 3.2 / 0.1 | 市场调研/dogfooding |
+| **/pair-agent** | "团队协作" | Phase 3.2 | 远程 Agent 协作 |
+| **/codex** | "第二意见" | Phase 2→④ | 对抗性审查 |
+| **/careful** | "安全操作" | Phase 2.3 | 破坏性命令保护 |
+
+### 5.2 Superpowers Skills（11 个）
+
+| Skill | 文章对应 | 在全流程中的位置 | 集成方式 |
+|-------|---------|-----------------|---------|
+| **subagent-driven-dev** | "小步开发" + "一次只改一个模块" | Phase 2.x | 任务粒度指导; "独立模块"规则 |
+| **executing-plans** | "拆解功能" | Phase 1.3→2.x | 批次执行+检查点 |
+| **writing-plans** | "规划模板" | Phase 1.3 | 测试/文档/审查三阶段模板 |
+| **requesting-code-review** | "代码审查" | Phase 2→④ | 子Agent审查门禁 |
+| **receiving-code-review** | "审查 AI 输出" | Phase 2→④ | 技术严谨性处理 |
+| **dispatching-parallel-agents** | "并行任务" | Phase 2.x | 3+独立问题并行 |
+| **finishing-a-development-branch** | "小步+验收" | Phase 2→3 | 分支完成标准化 |
+| **systematic-debugging** | "排查报错" | Phase 5.1 | 上下文清单 + 四阶段 |
+| **root-cause-tracing** | "根因分析" | Phase 5.1 | 调用链回溯 |
+| **verification-before-completion** | "测试验证" | Phase 2.2 | 阶段门禁 |
+| **test-driven-development** | "让 AI 补测试" | Phase 2→② | Phase 0 场景脑暴 |
+| **testing-anti-patterns** | "测试质量" | Phase 2→② | 不 mock 行为+第三方 |
+| **condition-based-waiting** | "条件测试" | Phase 2→② | 时间敏感测试 |
+| **remembering-conversations** | "上下文管理" | 所有 Phase | 跨会话上下文 |
+| **using-git-worktrees** | "并行分支" | Phase 2.x | 工作区隔离 |
+| **brainstorming** | "需求拆解" | Phase 0.1 | 发散收敛 |
+| **defense-in-depth** | "异常处理" | Phase 2→④ | 多层验证 |
+
+### 5.3 Addy-Agent Skills（14 个）
+
+| Skill | 文章对应 | 在全流程中的位置 | 集成方式 |
+|-------|---------|-----------------|---------|
+| **planning-and-task-breakdown** | "拆解功能" | Phase 1.3 | 验收标准+可独立测试 |
+| **spec-driven-development** | "理解需求→设计方案" | Phase 0.3→1.1 | 先写规范再编码 |
+| **incremental-implementation** | "小步开发" | Phase 2→③ | 薄垂直切片+边界检查 |
+| **code-review-and-quality** | "代码审查" | Phase 2→④ | 五轴审查 |
+| **idea-refine** | "需求拆解" | Phase 0.1 | 发散收敛+压力测试 |
+| **shipping-and-launch** | "上线检查" | Phase 3.1-3.3 | 版本/CHANGELOG/上线清单 |
+| **ci-cd-and-automation** | "自动化" | Phase 3.3 | 构建测试部署 |
+| **documentation-and-adrs** | "写接口文档" | Phase 3.4 / Phase 4 | ADR+文档 |
+| **source-driven-development** | "代码理解" | Phase 2→① | 源码驱动+权威来源 |
+| **doubt-driven-development** | "对抗思维" | Phase 2→④ | 非平凡决策审查 |
+| **code-simplification** | "代码质量" | Phase 2→③ | 行为保持简化 |
+| **context-engineering** | "提供上下文" | Phase 2→① | 上下文层级管理 |
+| **api-and-interface-design** | "设计接口" | Phase 1.1 | 接口规范+版本策略 |
+| **frontend-ui-engineering** | "前端工程" | Phase 2.x | 组件+状态+样式 |
+| **performance-optimization** | "性能优化" | Phase 5.2 | 系统化性能分析 |
+| **observability-and-instrumentation** | "可观测性" | Phase 5.3 | 日志/指标/追踪 |
+| **security-and-hardening** | "安全考量" | Phase 2.3 | OWASP+加固 |
+| **git-workflow-and-versioning** | "版本管理" | Phase 2→3 | 分支策略+规范 |
+| **deprecation-and-migration** | "技术债务" | Phase 4.2 | 废弃+迁移路径 |
+
+---
+
+## 第六章：特殊场景映射表（完整版）
+
+当你说以下任意一句话时，AI 自动路由到对应的技能组合：
 
 ```
-Session 开始
-    │
-    ├── 你说："使用质量节拍，当前焦点 Phase 1 —— 增强 render-engine.js"
-    │
-    ▼
-Step 1: 上下文加载（AI 自动）
-    ├── 读取 01-docs/PRD-video-creation.md → 了解 Phase 1 的验收标准
-    ├── 读取 01-docs/migration-plan-opermontage.md → 了解任务描述
-    ├── 读取 apps/desktop/electron/render-engine.js → 了解当前实现
-    └── 读取 D:\Projects\OpenMontage\tools\video\video_compose.py → 了解 OpenMontage 的渲染引擎
-    │     ↑ context-engineering 自动激活
-    │
-    ▼
-Step 2: 日常循环第 1 轮 —— render() 函数扩展
-    ├── source-driven-dev：OpenMontage 的 render() 接收 composition 参数
-    ├── TDD：先写 test('render accepts composition= CinematicRenderer')
-    ├── incremental-impl：只改 render() 签名，不改其他
-    └── /review：检查新参数是否向后兼容
-    │
-    ▼
-Step 3: 日常循环第 2 轮 —— IPC handler 扩展
-    ├── source-driven-dev：读取 OpenMontage 的 IPC 设计
-    ├── TDD：先写 test('render:start 透传 composition')
-    ├── incremental-impl：只改 ipc-handlers/render.js
-    └── /review：检查 IPC 协议一致性
-    │
-    ▼
-Step 4: 日常循环第 3 轮 —— 添加 render:list-compositions
-    ├── TDD：先写 test('render:list-compositions 返回数组')
-    ├── incremental-impl
-    └── /review
-    │
-    ▼
-Step 5: 子任务完成（AI 自动检测）
-    ├── AI: "enhance-render-engine 子任务已完成。需要跑阶段检查吗？"
-    │     ↑ verification-before-completion 自动激活
-    └── 你说："跑一遍"
-    │
-    ▼
-Step 6: 阶段检查
-    ├── verification-before-completion：
-    │   ✅ render() 支持 composition 参数
-    │   ✅ IPC 协议透传 composition
-    │   ✅ 向后兼容：旧调用仍正常工作
-    │   ❌ 测试覆盖率 70%，未达 80% 目标
-    ├── /health：
-    │   · 测试覆盖率: 70%（需补充）
-    │   · 死代码: 0
-    │   · lint: 0 warning
-    └── documentation-and-adrs：
-        · 记录 ADR: render-engine 扩展方案
-        · 选择本地 composition 参数传递，而不是在 Electron 进程中维护 composition 注册表
-    │
-    ▼
-Session 结束
-    ├── AI: "本阶段完成，剩余工作：补测试到 80% 覆盖率。下次从测试开始。"
-    └── 你说："记下来"
-        ↑ /learn 自动激活，记录问题
-```
-
-### 2.2 后补模式流程（对已有代码）
-
-```
-你说："对现有 CreateView.vue 跑后补模式"
-    │
-    ▼
-AI 自动执行 6 步流水线：
-    │
-    ① source-driven-dev
-    │   对比 D:\Projects\OpenMontage\remotion-composer\src\Explainer.tsx
-    │   输出差异清单
-    │
-    ② code-review-and-quality
-    │   扫描 CreateView.vue 的安全/错误处理/边界
-    │   输出审查报告
-    │
-    ③ /cso + /guard
-    │   安全审计：buildProps 是否有注入风险？
-    │
-    ④ 补测试
-    │   为 buildProps() 写单元测试
-    │   为 canRender 计算属性写测试
-    │
-    ⑤ documentation-and-adrs
-    │   记录 CreateView 的架构设计
-    │
-    ⑥ /health
-    │   健康检查评分
+你说                                    AI 映射的技能链
+────────────────────────────────────────────────────────────────
+"我有一个想法"                          /office-hours → /plan-ceo-review
+"帮我分析一下这个需求"                   /office-hours Phase 2.8 → spec-driven-dev
+"出个技术方案"                           /plan-eng-review → api-and-interface-design
+"审查一下架构"                           /plan-eng-review (双模型审查)
+"这个设计怎么样"                         /plan-design-review
+"规划一下"                              /autoplan → planning-and-task-breakdown
+"开始开发"                              → 日常循环 ⓪→①→②→③→④→⑤→⑥
+"出 bug 了"                             /investigate + systematic-debugging
+"修一下这个"                             /investigate (先根因再修)
+"帮我看一下代码"                         /review + code-review-and-quality
+"安全审计"                              /cso comprehensive + /guard
+"跑测试"                                /qa + TDD
+"做灰度"                                /canary + /browse
+"上线"                                  /ship → /land-and-deploy
+"复盘一下"                              /retro → /learn → /learn skillify
+"检查质量"                              /health + verification-before-completion
+"优化性能"                              /benchmark → performance-optimization
+"做监控"                                observability-and-instrumentation
+"写文档"                                /document-release + documentation-and-adrs
+"做设计系统"                            design-consultation → /design-html
+"市场调研"                              /office-hours (builder mode) + /browse
+"团队协作"                              dispatching-parallel-agents + subagent-driven-dev
+"并行搞这几个任务"                       dispatching-parallel-agents
+"第二意见"                              /codex (consult/challenge)
+"冻结范围"                              /freeze
+"安全模式"                              /guard
+"AI 怎么用"                             /ai-collaboration (Pillar 1-4)
+"这个模式反复出现"                       /learn skillify
+"环境配置"                              setup-deploy + ci-cd-and-automation
+"版本管理"                              git-workflow-and-versioning
 ```
 
 ---
 
-## 第三章：触发方式详解
+## 第七章：文章核心方法论的集成
 
-### 3.1 日常循环的触发
+### 7.1 "ChatGPT 更适合想清楚，Codex 更适合改代码"
 
-| 触发词 | 效果 |
-|--------|------|
-| `使用质量节拍` | 全量激活所有三层机制 |
-| `遵循质量节拍` | 同上 |
-| `日常循环` | 只激活第一层（编码节奏），不检查阶段 |
-| `当前焦点：[描述]` | 设定本次 session 的子任务，AI 自动进入日常循环 |
-
-### 3.2 阶段检查的触发
-
-| 触发词 | 效果 |
-|--------|------|
-| `阶段检查` | AI 执行 verification + health + adrs 全流程 |
-| `验收一下` | AI 执行 verification-before-completion |
-| `健康检查` | AI 执行 /health |
-| `记下来` | AI 执行 documentation-and-adrs |
-
-**AI 也会主动触发**：当它检测到以下条件时，会主动问你"需要跑阶段检查吗？"
+质量节拍在每个 Phase 的开始和结束嵌入"想清楚"阶段：
 
 ```
-- 当前 Phase 的 TODO 清单上所有子任务标记为完成
-- 测试覆盖率达到目标值
-- /review 报告没有 CRITICAL 项
+Phase 开始:
+  用 /ai-collaboration Pillar 1 → 描述问题
+  用 /office-hours / /plan-ceo-review → 想清楚
+
+Phase 执行:
+  用日常循环 → 改代码
+
+Phase 结束:
+  用 /ai-collaboration Pillar 3 → 审查输出
+  用 /retro → 复盘
+  用 /learn → 经验沉淀
 ```
 
-### 3.3 特殊场景的触发（完整映射表）
+### 7.2 "AI 协作能力是新技能"
 
-AI 通过**关键词匹配**自动激活对应技能。以下是完整的映射规则：
+文章第 12 节的 AI 协作能力被集成为日常循环的 Step ⑥：
 
-| 你说的话（关键词加粗） | AI 匹配的技能 | AI 的行为 |
-|---------------------|--------------|----------|
-| "出 **bug** 了" / "这 **错误** 怎么回事" / "**根因**是什么" | /investigate, systematic-debugging | 进入 5 阶段调试流程（复现→分析→假设→修复→报告） |
-| "**并行**做" / "**同时**搞" / "互不**依赖**" | subagent-driven-dev, dispatching-parallel-agents | 分析任务依赖图，启动多个 worker |
-| "**首次联调**" / "**第一**次跑" / "小心**测试**" | /careful, defense-in-depth | 每步确认结果，加入超时/验证/回滚三层保护 |
-| "这代码**可疑** / **不对** / **冗余**" | doubt-driven-dev | 主动质疑假设，标记存疑点逐个验证 |
-| "**安全**审计" / "**密钥**泄露" / "检查**风险**" | /cso, /guard | OWASP + STRIDE 全量扫描 |
-| "**架构**审一下" / "**方案**评估" | /plan-eng-review | 架构深度审查 |
-| "**UI**审一下" / "**视觉**看看" | /plan-design-review, /design-review | UI/UX 审查 |
-| "这个**需求**确定吗" / "**值不值得**做" | /office-hours | 6 轮追问澄清 |
-| "**接口**设计" / "IPC **协议**" | api-and-interface-design | 接口定义 + 签名规范 |
-| "**审查**意见回**来了**" / "**改完了**再看" | receiving-code-review | 逐条确认修复 |
-| "**发起**审查" / "帮我**看**这段代码" | requesting-code-review | 生成审查请求 |
-| "**分支收尾**" / "这个**搞完了**" | finishing-a-development-branch | 测试→merge→清理 |
-| "**发布**说明" / "**release notes**" | /document-release | 生成变更日志 |
-| "**总体验收**" / "跑一遍 **QA**" | /qa | 全量质量验证 |
-| "**复盘**一下" / "这**周**怎么样" | /retro | 工程复盘报告 |
-| "**记**下来" / "**记录**这个问题" | /learn | 写入 learnings |
-| "**commit**" / "**push**" / "**合并**" | git-workflow-and-versioning | Git 操作规范化 |
-| "这代码可以**简化**" / "太**复杂**了" | code-simplification | 重构简化 |
-| "**Vue 组件**规范" / "**前端**最佳实践" | frontend-ui-engineering | Vue 组件规范审查 |
+> **每次与 AI 交互后，自我检查：**
+> - 我描述清楚问题了吗？（Pillar 1）
+> - 我提供了足够的上下文吗？（Pillar 2）
+> - 我审查了 AI 的输出吗？（Pillar 3）
+> - 我能从这次交互中沉淀出模板吗？（Pillar 4）
 
----
+### 7.3 "代码生成只是第一层"
 
-## 第四章：实际场景（完整会话示例）
-
-### 场景 A：日常开发 —— 做 Phase 1 的 render-engine.js 扩展
+质量节拍确保你不会停留在第一层：
 
 ```
-你：使用质量节拍。当前焦点：Phase 1 —— 允许 render-engine.js 选择不同的 Composition。
-
-AI：好的，开始日常循环。
-
-① source-driven-dev
-    读取 D:\Projects\OpenMontage\tools\video\video_compose.py
-    发现关键设计：render_runtime 字段 + composition 选择
-    当前 render-engine.js 只有默认的 'Explainer'，需要加 composition 参数
-
-② TDD
-    先写测试文件 tests/render-engine.test.js：
-    · test('default composition is Explainer')
-    · test('accepts composition parameter')
-    · test('falls back to Explainer on invalid composition')
-    · test('passes composition to remotion CLI')
-    测试跑通 → 红色的 → 开始写实现
-
-③ incremental-impl
-    render() 签名从:
-      render(props, options = {})
-    改为:
-      render(props, options = { composition: 'Explainer', ... })
-    只改了这个函数，没改其他地方
-
-④ code-simplification
-    发现 OpenMontage 的实现有 HyperFrames + FFmpeg 路由，当前不需要，去掉
-
-⑤ /review
-    输出：
-    🟢 render-engine.js:12 新增 composition 参数有默认值，向后兼容
-    🟢 render-engine.js:45 composition 参数透传到 remotion CLI
-    🟠 render-engine.js:30 缺少 composition 类型校验（建议加）
-
-你：好，下一个子任务 —— 扩展 ipc-handlers/render.js
-
-AI：回到日常循环。① source-driven-dev...
+日常循环每轮自动上移一层：
+  第 1 轮：代码生成（第一层）
+  第 2 轮：代码理解（第二层）
+  第 3 轮：测试（第四层）
+  第 4 轮：审查（第五层）
+  第 5 轮：文档（第六层）
+  第 6 轮：复盘 → 经验沉淀（第七层）
 ```
 
-### 场景 B：出 bug —— OpenMontage 的 TalkingHead 在 Multi-Publish 渲染不出来
+### 7.4 "小步开发 — 一次只改一个模块"
+
+日常循环 Step ③ 通过增量约束确保这一点：
 
 ```
-你：TalkingHead 模式渲染出来是黑屏。
-
-AI：[检测到 bug 场景，自动匹配 /investigate]
-    进入根因调试流程：
-
-    Phase 1 — 复现
-    运行 npx remotion render src/index.tsx TalkingHead out/test.mp4 --props=...
-    确认黑屏可复现
-
-    Phase 2 — 对比分析
-    在 OpenMontage 跑同样的命令 → 正常
-    对比两个项目的 Root.tsx → 差异发现：
-    OpenMontage 的 TalkingHead 有 defaultProps.videoSrc = ""
-    Multi-Publish 也是，但 IPC 传递时 videoSrc 字段丢失
-
-    Phase 3 — 假设验证
-    假设：IPC 序列化时 videoSrc 被过滤了
-    证据：查看 IPC 日志，videoSrc 字段在 preload.js 的 contextBridge 中被遗漏
-
-    Phase 4 — 修复
-    在 preload.js 的 renderStart 定义中添加 videoSrc 字段
-
-    Phase 5 — 报告
-    🔴 CRITICAL | preload.js:42 | videoSrc 字段未在 contextBridge 注册
-    根因: preload.js 的 renderStart 接口固定只透传 props/profile
-    修复: 在 renderStart 中添加 videoSrc 到白名单
+✅ 正确：实现一个独立模块，提交，测试
+❌ 错误：同时改 3 个文件，一次性提交
+❌ 错误：改代码时"顺手"修了另一个不相关的 bug
+❌ 错误：一个任务里既重构又加新功能
 ```
 
-### 场景 C：后补模式 —— 对已有代码 CreateView.vue 补质量
+### 7.5 "管理 AI 输出，而非复制 AI 代码"
+
+日常循环 Step ④ + ⑥ 确保：
 
 ```
-你：对 apps/desktop/src/views/CreateView.vue 跑后补模式。
+Step ④ 审查：
+  - 代码风格与项目一致？
+  - 命名符合规范？
+  - 没有硬编码？
+  - 异常处理完整？
+  - 权限正确？
+  - 事务一致？
 
-AI：好的，启动后补流水线。
-
-Step 1 — 源码对齐
-    OpenMontage 的 CreateView 对应的是 Explainer.tsx 的 props 结构
-    当前 CreateView.vue 的 buildProps() 只传了 cuts + theme
-    缺失：overlays、captions、audio、compositionArgs
-    输出差异清单到 01-docs/quality-reports/createview-diff.md ✅
-
-Step 2 — 代码审查
-    🟢 组件覆盖了 loading/error 状态
-    🟠 buildProps() 的场景类型硬编码为 text_card 和 anime_scene
-    🟠 scene-${i} 的 id 可能冲突
-    输出审查报告 ✅
-
-Step 3 — 安全审计
-    🟢 没有直接 DOM 操作
-    🟢 没有 eval
-    🟢 所有用户输入通过 props 传递，没有注入风险
-    输出审计报告 ✅
-
-Step 4 — 补测试
-    为 buildProps() 写测试：
-    · text 模式 → 生成正确的 cuts 数组
-    · gallery 模式 → 生成正确的 cuts 数组
-    · 空输入 → 返回空数组
-    测试通过 ✅
-
-Step 5 — 补 ADR
-    记录：为什么 CreateView 用 buildProps 而不是直接操作 store
-    输出 ADR 到 docs/adr/ ✅
-
-Step 6 — 健康检查
-    评分: 7.2/10
-    建议：补充场景类型选择器、增加渲染参数校验
+Step ⑥ 协作质量：
+  - 我给了 AI 什么上下文？
+  - AI 输出质量如何？
+  - 下次怎么改进？
 ```
 
 ---
 
-## 第五章：完整技能覆盖清单
-
-### 日常循环（8 个技能）
-
-| # | 技能 | 触发方式 | 在循环中的角色 |
-|---|------|---------|--------------|
-| 1 | source-driven-dev | 自动（循环起点） | 读取 OpenMontage 源码，列出接口 |
-| 2 | spec-driven-dev | 自动（伴随 1） | 提取接口签名和参数 |
-| 3 | TDD | 自动（伴随 2） | 先写测试再写实现 |
-| 4 | testing-anti-patterns | 自动（伴随 3） | 检查测试质量 |
-| 5 | code-simplification | 自动（伴随 3） | 实现中持续做减法 |
-| 6 | incremental-impl | 持续约束 | 防止 scope creep |
-| 7 | context-engineering | 循环开始时 | 加载上下文 |
-| 8 | /review | 自动（循环终点） | 写完后审核 |
-
-### 阶段检查（3 个技能）
-
-| # | 技能 | 触发方式 | 产出 |
-|---|------|---------|------|
-| 9 | verification-before-completion | AI 检测到子任务完成时主动提示 | 验收清单逐条确认 |
-| 10 | /health | AI 主动提示或你说"健康检查" | 质量评分 + 改进项 |
-| 11 | documentation-and-adrs | AI 主动提示或你说"记下来" | ADR 文档 |
-
-### 特殊场景（26 个技能）
-
-见第三章完整的触发映射表，按场景分类：
-
-**调试类**: /investigate, systematic-debugging, /careful, defense-in-depth, doubt-driven-dev
-**并行类**: subagent-driven-dev, dispatching-parallel-agents
-**安全类**: /cso, /guard
-**审查类**: /plan-eng-review, /plan-devex-review, /plan-design-review, design-consultation, /design-review, receiving-code-review, requesting-code-review, api-and-interface-design, frontend-ui-engineering
-**需求类**: /office-hours, /plan-ceo-review
-**发布类**: finishing-a-development-branch, /ship, /document-release, /qa, git-workflow-and-versioning
-**复盘类**: /retro, /learn
-
----
-
-## 第六章：涉及的文档类型与产出时机
-
-质量节拍覆盖以下文档类型，每种的产出时机和负责节点不同：
-
-| 文档类型 | 产出时机 | 负责层 | 文件位置示例 |
-|---------|---------|-------|------------|
-| **PRD** | Phase 开始前 / 需求变更时 | 规划阶段（手动编写） |  1-docs/PRD-*.md |
-| **架构设计文档** | 架构方案确定时 | 规划阶段（手动编写） |  1-docs/ARCH-*.md |
-| **迁移/实施计划** | Phase 开始前 | 规划阶段（手动编写） |  1-docs/*-plan.md |
-| **接口规范文档** | 新增/变更 API 或 IPC 时 | 日常循环⑤ update-docs | docs/api/ |
-| **ADR（架构决策记录）** | 阶段检查时 | 阶段检查③ documentation-and-adrs | docs/adr/ADR-xxx.md |
-| **CHANGELOG** | 每个用户可见功能完成时 | 日常循环⑤ update-docs | CHANGELOG.md |
-| **审查报告** | 每次 /review 完成后 | 日常循环④ /review | 输出到控制台或  1-docs/quality-reports/ |
-| **测试报告** | QA 阶段 | 特殊场景 /qa |  1-docs/quality-reports/test-*.md |
-| **发布说明** | 版本发布时 | 特殊场景 /document-release |  1-docs/release-notes/ |
-| **Learnings（经验记录）** | 踩坑或解决问题后 | 特殊场景 /learn | ~/.gstack/projects/ |
-| **用户手册 / README** | 功能交付时 + 阶段检查 | 阶段检查④ doc-review | README.md / docs/user-manual.md |
-| **健康检查报告** | 阶段检查时 | 阶段检查② /health |  1-docs/quality-reports/health-*.md |
-
-### 阶段检查的 Phase 自适应
-
-AI 会根据当前 Phase 自动裁剪检查项：
-
-`
-阶段检查（AI 自动裁剪）：
-  ├── [必] verification-before-completion     → 每 Phase 都要
-  ├── [必] /health                            → 每 Phase 都要
-  ├── [必] documentation-and-adrs              → 每 Phase 都要
-  ├── [必] doc-review                          → 每 Phase 都要
-  ├── [按需] 安全检查                          → 引入 Python 工具链等外部依赖的 Phase
-  └── [按需] 依赖审查                          → 新增了外部 npm / pip 依赖的 Phase
-`
-
-### 实际执行建议
-
-- **日常循环**：大部分时间你不会新建文档，只是在 update-docs 步骤更新 CHANGELOG 和接口文档。AI 会自动判断当前改动是否需要更新文档。
-- **阶段检查**：是补文档的关键节点。doc-review 步骤会扫描缺少的文档并提示你补充。
-- **一个原则**：如果改动了对外可见的行为（API 签名、IPC 协议、用户界面），就必须更新对应文档。"代码即文档"只在内部实现层面成立。
-
-
-## 第七章：AI 帮你写文档（PRD / 架构 / 计划）
-
-你不需要自己写完整的 PRD 或架构文档。**你只需要描述产品需求和目标，AI 会在 pre-flight 阶段自动生成这些文档。**
-
-### 7.1 AI 写 PRD
-
-你说一段话描述需求，AI 会自动生成结构化的 PRD：
-
-`
-你：我想做一个视频转推文的功能，把长视频自动提取关键帧和文字，生成 Twitter 线程。
-    目标用户是海外运营，MVP 能处理 5 分钟以内的视频。
-
-AI：好的，我先出一份 PRD。
-    自动生成：01-docs/PRD-video-to-thread.md
-    包含：目标用户、P0/P1/P2 功能列表、验收标准、排除项
-    你确认后 → 进入架构设计阶段
-`
-
-**触发方式**：
-
-| 你说 | AI 行为 |
-|------|--------|
-| "我想做一个 XX 功能，目标是 XX" | 自动进入 PRD 生成流程 |
-| "帮我把这个需求的 PRD 写出来" | 基于已有讨论生成 PRD |
-| "更新一下 PRD，XX 需求变了" | 在现有 PRD 基础上修改 |
-
-### 7.2 AI 出架构设计
-
-PRD 确认后，AI 自动进入架构设计：
-
-`
-你：PRD 确认了，出架构方案吧。
-
-AI：好的，基于 PRD 分析技术方案。
-    产出 2-3 个方案对比，包含：
-    · 方案概述
-    · 技术选型理由
-    · 目录结构
-    · 数据流
-    · 优缺点对比
-    推荐最简方案（能不用数据库就不用）
-    你选择后 → 进入开发计划阶段
-`
-
-**触发方式**：
-
-| 你说 | AI 行为 |
-|------|--------|
-| "PRD 确认了" | 进入架构设计流程 |
-| "出技术方案" | 直接基于讨论产出架构文档 |
-| "设计一下这个功能的接口" | 产出接口规范文档 |
-
-### 7.3 AI 拆开发计划
-
-架构确认后，AI 自动将 MVP 拆成任务：
-
-`
-AI：基于架构方案，MVP 拆解为：
-    · 任务 1：视频上传 + 帧提取（4h）
-    · 任务 2：OCR/字幕识别（4h）
-    · 任务 3：推文模板生成（2h）
-    · 任务 4：Twitter API 发布适配（3h）
-    标注依赖：任务 3 依赖任务 1+2
-    可并行：任务 1 和任务 2 可同时进行
-`
-
-### 7.4 完整流程
-
-`
-你的一句话："我想做一个把视频转推文的功能"
-    │
-    ▼
-AI: 自动进入 ⓪ pre-flight
-    ├── 检测到没有 PRD → 进入 PRD 生成流程
-    ├── 输出 PRD → 你确认
-    ├── 检测到没有架构设计 → 进入架构设计流程
-    ├── 输出架构方案 → 你选择
-    ├── 检测到没有开发计划 → 自动拆任务
-    └── 输出任务清单 → 你确认优先级
-    │
-    ▼
-进入日常循环：source → TDD → incremental-impl → /review
-`
-
-**你只需要做的事情**：说出你的想法 → 确认 AI 产出的文档 → 开始编码。
-**你不需要做的事情**：自己写 PRD 模板、画架构图、拆任务清单。
-
-### 让 AI 识别这个 skill
-
-这个 skill 放在 `~/.agents/skills/质量节拍/SKILL.md`。支持这个目录的 AI 工具（Codex、Cursor、Claude Code 等）会自动发现它。
+## 第八章：开始使用
 
 ### 首次会话
 
 ```
-使用质量节拍 skill，当前焦点：[Phase 编号] —— [子任务名称]
+使用质量节拍，当前焦点：[Phase 编号] —— [子任务名称]
 ```
 
 ### 后续会话
 
 ```
-遵循质量节拍。当前焦点：[新子任务]
+遵循质量节拍。当前焦点：[Phase 编号] —— [新子任务]
 ```
 
-### 一句话检查自己是否在执行
+### 快速切换 Phase
 
-> 我现在在质量节拍的哪一层？
-> - 日常循环：正在编码，4 步走完了吗？
-> - 阶段检查：Phase 快结束了，跑了验收吗？
-> - 特殊场景：当前状况触发映射表里的哪一条？
+```
+"Phase 0 — 调研视频转推文功能"
+"Phase 1 — 出技术方案"
+"Phase 2 — 实现核心模块"
+"Phase 3 — 准备发布"
+"Phase 4 — 复盘这个 Sprint"
+"Phase 5 — 排查线上问题"
+```
+
+### 一句话检查
+
+> **我在质量节拍的哪一层？**
+> - Phase 0：我在想清楚还是写代码？
+> - Phase 1-2：日常循环 6 步走完了吗？
+> - Phase 3-4：阶段检查跑了吗？
+> - 特殊场景：当前状况触发映射表的哪一条？
+> - 协作质量：我用了 /ai-collaboration 吗？
+
+---
+
+
+
+## 第九章：文章深度集成（完整对照）
+
+### 9.1 文章 12 节 × 质量节拍对照表
+
+```
+文章章节                             质量节拍中的体现
+────────────────────────────────────────────────────────────────
+前言：AI 编程不是自动写代码          全篇基调 — 日常循环不只有"写代码"
+一、代码生成只是第一层价值           日常循环 Step ②③（写代码），但只占 2/6
+二、ChatGPT 想清楚 / Codex 改代码    Phase 0-1 用 /office-hours, Phase 2 用日常循环
+三、代码理解比代码生成更实用         日常循环 Step ① — source-driven-dev 是第一步
+                                     文章说："真实项目 80% 时间是读代码，不是写代码"
+                                     所以质量节拍第一步不是写，是读
+四、报错排查最能体现 AI 价值         /investigate — 场景映射表第一位
+                                     触发方式 C "出 bug 了" → 自动路由
+                                     文章说："如果你直接把错误信息贴进去，效果会好很多"
+                                     这就是 Step ① 上下文完整性检查的源头
+五、小步开发 — 一次改一个模块        日常循环 Step ③ 增量约束
+                                     文章说："改完一个功能立刻测试"
+                                     所以 Step ②（测试）在 Step ③ 之前
+六、测试设计：让 AI 补测试           日常循环 Step ② 场景脑暴 + TDD
+                                     文章说："列出可能出问题的场景"
+                                     文章又说："如果测试场景都列不清楚，说明需求还没想清楚"
+                                     这就是 pre-flight 的验收标准检查
+七、代码审查：让 AI 查你的代码       日常循环 Step ④ /review
+                                     文章说："代码审查有三个层次：
+                                      第一层：低级错误（拼写、语法、类型）
+                                      第二层：架构问题（耦合、设计模式、扩展性）
+                                      第三层：业务逻辑漏洞（边界情况、异常流程）"
+                                     所以 Step ④ 也从这三个层次展开检查
+八、文档整理：AI 最被低估的能力      日常循环 Step ⑤ update-docs
+                                     文章给了具体模板："整理文章提纲 → 整理周报 → 写技术文档"
+                                     详见 9.4 提示词模板
+九、复盘踩坑：让 AI 帮你沉淀经验     Phase 4 复盘期：/retro → /learn → /learn skillify
+                                     文章说："把踩坑经历整理成文档"
+                                     文章说："把经验沉淀成提示词"
+                                     这就是 /learn skillify 的核心理念
+十、提示词模板                       详见 9.4
+十一、AI 编程最容易出问题的 6 种情况  详见 9.2 — 质量节拍内置了 6 道防线
+十二、AI 协作能力是新能力            日常循环 Step ⑥ + /ai-collaboration
+                                     质量节拍本身就是在训练 AI 协作能力
+总结：技术基础 + 工程经验 + AI 协作   详见 9.3 — 程序员能力结构模型
+```
+
+### 9.2 文章 6 大失败场景 × 质量节拍 6 道防线
+
+文章第 11 节列出了 AI 编程最容易出问题的 6 种情况。质量节拍内置了对应的 6 道防线：
+
+```
+文章说                          质量节拍防得住吗？        怎么防？
+──────────────────────────────────────────────────────────────
+1. 需求不清楚                     ✅ Phase 0.3 + 2.8       /office-hours 需求边界探测
+2. 上下文不足                     ✅ 日常循环 Step ①      上下文完整性自检清单
+3. 任务太大                       ✅ /autoplan 3.6        小步粒度检查 + 独立模块规则
+4. 没有人工审查                   ✅ 日常循环 Step ④      /review + 6 大专项检查
+5. 没有测试验证                   ✅ 日常循环 Step ②      TDD + 场景脑暴 + 先写测试再实现
+6. 敏感信息处理不当               ✅ /guard + /careful     安全模式 + 破坏性命令保护
+```
+
+**这 6 道防线是 pre-flight 的核心检查项：**
+
+```
+⓪ pre-flight 检查（文章 6 大问题版）：
+    ├── ✅ 防线 1：需求是否清楚？
+    │   ├── 有 PRD 吗？→ 没有 → ⚠️ 调用 /office-hours
+    │   └── 验收标准明确吗？→ 没有 → ❌ 不能开始
+    ├── ✅ 防线 2：上下文是否足够？
+    │   ├── 相关代码已读取？→ 没有 → ⚠️ 先 source-driven-dev
+    │   └── 技术栈/版本已确认？→ 没有 → ⚠️ 先 context-engineering
+    ├── ✅ 防线 3：任务是否太大？
+    │   ├── >5 个文件？→ ⚠️ 建议拆解
+    │   └── 跨 3 个模块？→ ⚠️ 建议拆解
+    ├── ✅ 防线 4：有人审查吗？
+    │   └── 审查 gate 已配置？→ 没有 → ⚠️ 确认审查人
+    ├── ✅ 防线 5：有测试验证吗？
+    │   └── 测试计划存在？→ 没有 → ⚠️ 先出测试计划
+    └── ✅ 防线 6：敏感信息已保护？
+        ├── API Key / 密钥已排除？→ 没有 → ❌ 检查后再提交
+        └── 客户数据不上传？→ ⚠️ 确认
+```
+
+### 9.3 文章总结的"程序员能力结构"模型
+
+文章总结说 **"2026 年以后，优秀程序员的能力结构 = 技术基础 + 工程经验 + AI 协作能力"**。
+
+质量节拍对应这三个能力的训练场：
+
+```
+能力支柱             质量节拍中的对应
+─────────────────────────────────────────────────────────
+技术基础            日常循环 Step ①-⑤ 强制执行编码规范、测试、审查
+（编程语言/数据库/   每次循环都是一次技术基本功的训练
+ 框架/操作系统/网络） 
+
+工程经验            /plan-eng-review → /review → /retro
+（架构设计/方案取舍/  每次审查看到架构问题，每次复盘沉淀工程经验
+ 踩坑复盘）          /plan-ceo-review 训练方案判断能力
+
+AI 协作能力         日常循环 Step ⑥ + /ai-collaboration
+（描述问题/提供上下文/ 每次循环结束时的自检，就是 AI 协作能力的刻意练习
+ 审查输出/沉淀模板）   /learn skillify 训练"从经验到模板"的转化能力
+```
+
+**三根支柱互相加强：**
+
+```
+技术基础越好 → 越能准确描述问题给 AI → 协作质量越高
+工程经验越丰富 → 越能审查 AI 输出 → 错误越少
+AI 协作能力越强 → 越快完成任务 → 有更多时间学技术
+```
+
+### 9.4 文章第 10 节的具体提示词模板（直接集成）
+
+文章给出了具体的提示词模板，质量节拍直接内置：
+
+#### 代码审查提示（文章原版 → 集成到 Step ④）
+
+```
+原版："请审查这段 Python 代码，重点检查命名规范、异常处理和性能瓶颈"
+
+质量节拍版（自动展开）：
+  Step ④ /review 自动执行 6 大专项检查：
+    🔴 异常处理 — 每个新函数有 try-catch？错误不吞掉？
+    🔴 权限边界 — 新 API 有鉴权？现有鉴权被绕过？
+    🔴 事务一致性 — 多步写入能回滚？
+    🔴 边界值 — 空/零/最大值处理了？
+    🔴 代码风格 — 与项目一致？命名符合规范？
+    🔴 Demo 代码 — 有硬编码？日志完整？
+```
+
+#### 测试设计提示（文章原版 → 集成到 Step ②）
+
+```
+原版："我要测试一个用户注册功能，帮我列出需要覆盖的测试场景"
+
+质量节拍版（自动展开）：
+  Step ② 自动执行 TDD Phase 0 脑暴模板：
+    正常路径 → 异常路径 → 业务规则 → 幂等性
+    最少列出 3 个场景 → 不够说明需求没想清楚
+```
+
+#### 文档整理提示（文章原版 → 集成到 Step ⑤）
+
+```
+原版："请把这段代码的设计思路整理成技术文档，包括背景、方案选型、核心逻辑"
+
+质量节拍版（自动展开）：
+  Step ⑤ 自动判断并更新对应文档：
+    新增 API 接口 → 更新接口文档
+    用户可见功能变化 → 更新 CHANGELOG
+    架构变更 → 更新架构文档
+    代码设计思路 → 在代码注释区生成设计说明
+```
+
+#### 复盘提示（文章原版 → 集成到 Phase 4）
+
+```
+原版："请把下面开发经历整理成 CSDN 技术文章提纲，包括背景、问题、排查、解决方案、踩坑点和总结"
+
+质量节拍版（自动展开）：
+  Phase 4 /retro 自动结构：
+    背景 → 需求回顾 → 做了什么 → 踩坑 → 经验
+    输出到 learnings.jsonl → 跨会话可查
+    多次重复的模式 → 触发 /learn skillify
+```
+
+### 9.5 "代码理解比代码生成更实用" — 文章第三节的深度应用
+
+文章指出：**"真实项目里，80% 的时间是在读代码，而不是写代码。"**
+
+质量节拍的日常循环以代码理解（Step ①）开头，而非代码生成：
+
+```
+你开始一个新子任务
+    │
+    ▼
+⓪ pre-flight
+    │
+    ▼
+① 代码理解 ← 第一步不是写，是读！（文章第三节）
+    ├── 读取相关源码（source-driven-dev）
+    ├── 理解现有逻辑
+    ├── 找到改动点
+    └── 确认"要改什么"之后 → 才进入 Step ②
+```
+
+**文章说：** "代码理解的价值，甚至比代码生成更高。因为大部分时候，你只是不知道代码在干什么，而不是写不出来。"
+
+**质量节拍的应用：** 如果日常循环跳过了 Step ① 直接写代码，说明没有遵守质量节拍。
+
+---
 
 
 
 
+## 第十章：来自"项目开发和管理"知识库的深度集成
+
+### 10.1 四层团队架构（来自 协作机制和开发流程.md 和 agent-workflow）
+
+真实开发不是单枪匹马，而是**多角色协作**。质量节拍引入四层团队架构：
+
+```
+你（人类）—— L1 决策层（CEO）
+  │  战略方向、资源分配、优先级决策、最终验收
+  │
+  ▼
+AI 架构师/COO —— L2 设计/审查/分配层
+  │  架构设计、任务分配、代码审查、质量门禁
+  │  参与：/plan-eng-review, /review, /autoplan, /retro
+  │  LLM 分配：重模型（Sonnet/o4-mini）
+  │
+  ├──▶ Agent A（会话 1）—— L3 执行层
+  │    职责：模块 A 全权开发与维护
+  │    参与：日常循环 ⓪→①→②→③→④→⑤→⑥
+  │    LLM 分配：重模型决策 + 轻模型执行
+  │
+  ├──▶ Agent B（会话 2）—— L3 执行层
+  │    职责：模块 B 全权开发与维护
+  │    参与：日常循环（同上）
+  │
+  ├──▶ Agent C（会话 3）—— L3 执行层
+  │    职责：模块 C 全权开发与维护
+  │    参与：日常循环（同上）
+  │
+  └──▶ opencode（远程服务器）—— L3 运维层
+       职责：服务器运维、爬虫健康、数据修复
+       参与：机械执行任务，不参与环形审查
+
+  L4 监督层 —— 自动化
+    │  GitHub CI/GitHub Actions / crontab
+    │  实时反馈、异常升级、自动修复
+```
+
+**STATUS.yaml 作为协同枢纽**（来自 agent-workflow）：
+
+```yaml
+# 每个项目根目录下的 STATUS.yaml
+agents:
+  agent_a:
+    status: busy          # idle/busy/blocked/review
+    task: P2-01
+    design_note: DN-001    # 已提交的 Design Note
+    pending_review: DN-001 # 待审查
+  agent_b:
+    status: idle
+  agent_c:
+    status: blocked
+    blocked_by: P2-01
+
+tasks:
+  P2-01:
+    assignee: agent_a
+    status: in_review
+  P2-02:
+    assignee: agent_c
+    status: blocked
+```
+
+### 10.2 Design Note 流程（来自 协作机制和开发流程.md）
+
+在实施任何非平凡变更前，必须先写 Design Note（DN）：
+
+```
+你接到一个任务
+    │
+    ▼
+① 写 Design Note
+    ├── 问题/需求描述
+    ├── 方案选择（至少 2 个方案对比）
+    ├── 影响范围（文件、模块、API）
+    ├── 风险点（兼容性、性能、安全）
+    └── 测试策略（怎么验证）
+    │
+    ▼
+② AI 架构师审查 DN
+    ├── ✅ 通过 → 进入实施
+    ├── ❌ 打回 → 修改后重新提交
+    └── 🔄 需要讨论 → 标记问题点
+    │
+    ▼
+③ 实施（日常循环 ⓪→①→②→③→④→⑤→⑥）
+    │
+    ▼
+④ Review（Step ④ 验证实现与 DN 一致）
+```
+
+**触发时机：** 
+- Phase 1→2 过渡：每个子任务开始前
+- 任何涉及跨模块变更、API 设计、数据库改动的任务
+- 开发者不确定方案时主动要求
+
+### 10.3 LLM 分级策略（来自 协作机制和开发流程.md）
+
+文章说 **"重模型花在想上，轻模型花在干上"**。质量节拍集成 LLM 分级：
+
+```
+🟥 重模型（Sonnet/o4-mini 级）—— 花预算的地方
+   适用环节              原因                替代风险
+   ─────────────────────────────────────────────────────
+   架构/接口设计          一个错误决策=全白写     轻模型漏边界条件
+   代码 Review           需要理解设计意图        轻模型只抓格式问题
+   复杂调试              跨模块追踪根因          轻模型陷入局部最优
+   核心业务逻辑           出错=生产事故          —
+   测试策略设计           决定测什么不测什么      轻模型测无关用例
+   多 Agent 分配/调度    这个位置没有替代         —
+
+🟩 轻模型（Haiku/4o-mini/Flash 级）—— 省预算的地方
+   适用环节              前提条件               省多少
+   ─────────────────────────────────────────────────────
+   CRUD 样板代码         接口契约已锁死          ~70%
+   单元测试实现           测试策略已定            ~60%
+   类型标注/格式化        纯机械填充              ~80%
+   Config 文件           有现成模板              ~70%
+   文档/docstring        代码已写完              ~60%
+   批量修改（模式已知）   改法已确认              ~80%
+
+🟡 中庸层（可上可下）
+   写 Feature 代码        看复杂度：接口锁死→轻；含逻辑判断→重
+   集成测试              重（跨模块验证，漏一个就是漏 bug）
+   AI 写代码时的"自检"    轻模型写→重模型快速过一眼（性价比最高）
+```
+
+**实战流水线：**
+
+```
+你确认方向
+  ↓
+L2 架构师（重模型）分析 → 拆任务 → 标注哪些可走轻模型
+  ↓
+轻量子 Agent（Haiku）写 CRUD / 改配置 / 补测试
+  ↓
+L2 架构师（重模型）review diff → 验证 → push
+```
+
+### 10.4 环形审查机制（来自 协作机制和开发流程.md）
+
+多 Agent 并行开发时，引入**环形审查**：
+
+```
+Agent A 完成 P2-01
+    │
+    ▼
+写 Design Note DN-001 → push → STATUS.yaml 标记 pending_review
+    │
+    ▼
+L2 架构师审查 DN-001
+    ├── 架构合理性
+    ├── 接口设计
+    └── 测试策略
+    │
+    ▼
+Agent A 实施
+    │
+    ▼
+Agent B 审查 Agent A 的代码（环形审查）
+    ├── 代码质量
+    ├── 边界情况
+    └── 与 Agent B 模块的接口兼容性
+    │
+    ▼
+L2 架构师最终审查 → merge
+```
+
+**环形审查原则：**
+- Agent B 审查 A 的代码 → Agent C 审查 B 的代码 → Agent A 审查 C 的代码
+- 审查聚焦在**接口兼容性**和**跨模块影响**，不在编码细节
+- 编码细节由 Step ④ `/review` 自动处理
+
+### 10.5 Bug 反思循环（来自 bug-and-problem-reflection.md）
+
+每次发现 bug，触发质量节拍的 **Bug 反思循环**：
+
+```
+发现 bug
+    │
+    ▼
+① 5 Whys 根因分析（/bug-reflection skill）
+    │
+    ▼
+② 四维分类：
+    ├── PRD 层面：需求写清楚了吗？边界条件定义了吗？
+    ├── 代码层面：实现有逻辑错误吗？
+    ├── 测试层面：测试覆盖到了吗？Mock 正确吗？
+    └── 流程层面：质量节拍的哪一步没执行到位？
+    │
+    ▼
+③ 生成改进措施
+    ├── 必须对应到具体文件变更（不能"以后注意"）
+    ├── 写入 learnings（/learn）
+    └── 更新质量节拍（如果发现流程漏洞）
+    │
+    ▼
+④ 执行验证
+    ├── 修代码 → 补测试 → 更新文档
+    └── 标记为"已修复"（cross-session 可查）
+```
+
+**集成到日常循环：** Step ⑥ 在完成一个子任务后，自动检查当前会话有没有发现新的 bug，有则触发反思循环。
+
+### 10.6 Research 阶段：先想清楚再动手（来自 Research提示词.md）
+
+在 Phase 0 之前，增设 **Research 前置阶段**，基于 First Principles 方法：
+
+```
+任何开发任务开始前：
+    │
+    ▼
+① 理解问题（Research）
+    ├── 问题的本质是什么？
+    ├── 用户真正想解决什么？
+    └── 成功标准是什么？
+    │
+    ▼
+② 构建多个假设
+    ├── 至少 2~3 种可能解释或方案
+    ├── 不要默认第一个想法是对的
+    └── 主动寻找反例
+    │
+    ▼
+③ 区分事实和假设
+    ├── 已知事实（有证据支持）
+    ├── 缺失信息（需要收集）
+    └── 隐含假设（需要验证）
+    │
+    ▼
+④ 验证后再进入 Phase 0
+    ├── 每个关键结论标注确信度（高/中/低）
+    ├── 不确定不是错误，不标注不确定才是
+    └── 信息不足时提关键问题，不猜测
+```
+
+**触发时机：**
+- Phase 0 调研前自动进入（用户说"帮我分析一下X"）
+- 任务涉及陌生领域或不确定方案时
+- 项目重大决策时由 L2 架构师触发
+
+### 10.7 Page-Level TDD：状态枚举优先于测试编写（来自 开发流程和机制优化）
+
+前端页面开发时，日常循环 Step ② 扩展为：
+
+```
+② 页面级 TDD（增强版）：
+    ├── Phase 1：状态枚举（新增）
+    │   ├── 梳理所有用户交互路径（正常路径 A/B/C）
+    │   ├── 生成状态覆盖矩阵：
+    │   │   └── 每个数据源的 Loading / Empty / Error / Success / Edge Case
+    │   └── 枚举所有非正常状态的 UI 提示文字
+    │
+    ├── Phase 2：TDD 执行
+    │   ├── 逐条 RED→GREEN→REFACTOR
+    │   └── 覆盖所有枚举状态
+    │
+    └── 门禁：状态枚举不全 → ❌ 不能开始写代码
+```
+
+### 10.8 质量门禁系统（来自 quality-playbook-ai-prompt.md）
+
+质量节拍的每个 Phase 结束时，自动触发质量门禁检查：
+
+```
+Phase 0 门禁：
+  [ ] 需求边界清楚（/office-hours Phase 2.8）
+  [ ] 至少 2 个技术方案对比
+  [ ] 明确"不做什么"清单
+
+Phase 1 门禁：
+  [ ] 架构审查通过（/plan-eng-review）
+  [ ] 任务粒度符合小步规则（/autoplan 3.6）
+  [ ] 每个任务有测试/文档/审查阶段（/autoplan 3.7）
+
+Phase 2 门禁：
+  [ ] 日常循环 6 步完整执行
+  [ ] 代码审查无 CRITICAL 问题
+  [ ] 测试覆盖 >= 3 场景/模块
+  [ ] API Key 无硬编码（/cso）
+
+Phase 3 门禁：
+  [ ] /review 全量审查通过
+  [ ] /qa 端到端测试通过
+  [ ] 文档同步完成（/document-release）
+  [ ] CHANGELOG 更新
+
+Phase 4 门禁：
+  [ ] /health 评分 >= 7
+  [ ] /retro 产出了 learnings
+  [ ] learnings 已 review（/learn skillify 检查）
+  [ ] 未触发 /bug-reflection 的未解决问题
+
+Phase 5 门禁：
+  [ ] /investigate 无未解决的告警
+  [ ] /cso daily 安全扫描通过
+  [ ] 性能指标在基线内（/benchmark）
+```
+
+**门禁失败处理：**
+- ❌ 一个门禁失败 → 在当前 Phase 修复再重跑
+- ❌❌ 三个门禁失败 → 降级到上一 Phase 重新执行
+- ⚠️ 门禁被跳过 → 记录到 learnings，下次复盘时审查
+
+---
+
+
+## 附录：版本变更
+
+### 2026-07 重大更新
+- 深度集成文章 12 节对照表
+- 6 大失败场景 → 6 道防线 pre-flight 检查
+- 程序员能力结构模型（技术基础 + 工程经验 + AI 协作）
+- 文章原版提示词模板直接内置到日常循环各步骤
+- 四层团队架构（L1 CEO→L2 架构师→L3 Agent→L4 自动化）
+- Design Note 流程（DN 写→审→实施→验证）
+- LLM 分级策略（重模型花在想，轻模型花在干）
+- 环形审查机制（Agent 互审 + 架构师终审）
+- Bug 反思循环（5 Whys + 四维分类 + 改进执行）
+- Research 阶段（First Principles 先想清楚再动手）
+- Page-Level TDD（状态枚举优先于测试编写）
+- 质量门禁系统（每个 Phase 6 道门禁，失败降级处理）
+- 深度集成文章 12 节对照表
+- 6 大失败场景 → 6 道防线 pre-flight 检查
+- 程序员能力结构模型（技术基础 + 工程经验 + AI 协作）
+- 文章原版提示词模板直接内置到日常循环各步骤
+- "代码理解 > 代码生成"原则 — 日常循环以读取代码开头
+- 全流程覆盖：5 大 Phase、13 子阶段
+- 集成 52 个技能到全流程映射
+- 日常循环扩展为 6 步（新增 Step ① 上下文检查 + Step ⑥ 协作质量）
+- 阶段检查扩展到每个 Phase
+- 新增 /ai-collaboration 技能集成
+- 场景映射表从 24 个扩展到 32 个
+- 注入文章所有核心方法论
