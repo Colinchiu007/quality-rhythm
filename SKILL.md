@@ -1116,7 +1116,7 @@ Phase 3: 直接发布（灰度加速）
   /ship → /land-and-deploy（跳过完整 /review）
           ↓
 Phase 4-mini: 事后补复盘（Bug 反哺必须执行）
-  /retro → Bug 反哺分析：“这个 bug 为什么之前的测试没抓到？”　→ 更新测试场景库
+  /bug-reflection（焦点：“这个 bug 为什么之前的测试没抓到？”）→ 更新测试场景库
   【门禁】Bug 反哺未完成 → 不得关闭热修复单
 `
 
