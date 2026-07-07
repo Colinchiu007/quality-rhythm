@@ -1115,8 +1115,9 @@ Phase 2-mini: 最小日常循环
 Phase 3: 直接发布（灰度加速）
   /ship → /land-and-deploy（跳过完整 /review）
           ↓
-Phase 4-mini: 事后补复盘
-  /retro → 问"这个 bug 为什么之前的测试没抓到？"
+Phase 4-mini: 事后补复盘（Bug 反哺必须执行）
+  /retro → Bug 反哺分析：“这个 bug 为什么之前的测试没抓到？”　→ 更新测试场景库
+  【门禁】Bug 反哺未完成 → 不得关闭热修复单
 `
 
 **规则**：热修复通道只用于 P0/P1 问题，事后必须补 Phase 4 复盘。
