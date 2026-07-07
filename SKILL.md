@@ -57,12 +57,12 @@
 │                                                                         │
 │  Phase 2: 开发期 (Build) — 进入日常循环                                  │
 │  ├── 2.1 编码     ──→ 日常循环 ⓪→①→②→③→④→⑤                          │
-│  ├── 2.2 集成测试 ──→ /qa, verification-before-completion              │
+│  ├── 2.2 集成测试 ──→ /qa, verification-before-completion, 组合测试(跨模块交互)  │
 │  └── 2.3 安全审查 ──→ /cso, /guard, /freeze                            │
 │                                                                         │
 │  Phase 3: 交付期 (Ship)                                                 │
 │  ├── 3.1 发布审查 ──→ /review (完整), /ship                            │
-│  ├── 3.2 灰度验证 ──→ /canary, /browse, pair-agent                    │
+│  ├── 3.2 灰度验证 ──→ /canary, /browse, pair-agent, Dogfooding检查清单      │
 │  ├── 3.3 发布上线 ──→ /land-and-deploy, ci-cd-and-automation, 部署手册   │
 │  ├── 3.4 文档同步 ──→ /document-release                                 │
 │  ├── 3.5 用户说明 ──→ User Manual / 使用说明                      │
@@ -71,7 +71,7 @@
 │                                                                         │
 │  Phase 4: 复盘期 (Retro)                                                │
 │  ├── 4.1 质量体检 ──→ /health                                           │
-│  ├── 4.2 技术复盘 ──→ /retro                                            │
+│  ├── 4.2 技术复盘 ──→ /retro, Bug反哺分析(为什么没测出来)  │
 │  └── 4.3 经验沉淀 ──→ /learn, /ai-collaboration (Pillar 4)             │
 │                                                                         │
 │  Phase 5: 运营期 (Operate)                                              │
@@ -120,13 +120,13 @@ Phase 1.3 (计划) → /autoplan → planning-and-task-breakdown
 Phase 1.4 (DX)   → /plan-devex-review
 Phase 2.x (开发) → 日常循环 ⓪→①→②→③→④→⑤
 Phase 3.1 (发布) → /review → /ship
-Phase 3.2 (灰度) → /canary → /browse → pair-agent
+Phase 3.2 (灰度) → /canary → /browse → pair-agent → Dogfooding 检查清单
 Phase 3.3 (上线) → /land-and-deploy → ci-cd-and-automation
 Phase 3.4 (文档) → /document-release → documentation-and-adrs
 Phase 3.5 (说明) → User Manual (使用说明)
 Phase 3.6 (归档) → Decision Log (决策日志)
 Phase 3.7 (反馈) → User Feedback (用户反馈记录)
-Phase 4.x (复盘) → /health → /retro → /learn
+Phase 4.x (复盘) → /health → /retro → /learn → Bug 反哺分析
 Phase 5.x (运营) → /investigate → /benchmark → /cso
 ```
 
@@ -159,6 +159,7 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
 "帮我想个方案"              → /office-hours → /plan-ceo-review
 "审查一下"                  → /review + code-review-and-quality
 "出安全审计"               → /cso + /guard
+"做 dogfooding"                   /browse + Dogfooding 检查清单
 "做性能测试"               → /benchmark
 "灰度发布"                 → /canary
 "上线"                     → /ship → /land-and-deploy
@@ -201,8 +202,16 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
     │
     ▼
 ② AI 辅助测试场景脑暴（文章：让 AI 补测试 — 先想再写）
-    ├── 列出正常路径、异常路径、业务规则、幂等性场景
-    │   └── 使用 TDD Phase 0 模板
+    ├── 正常路径（Happy Path）
+    ├── 异常路径（Error Path）
+    ├── 业务规则与验证逻辑
+    ├── 幂等性与重复提交
+    ├── 数据边界（空/零/负/极大值、特殊字符、Unicode、超长输入）
+    ├── 组合场景（多个功能同时操作、状态交叉）
+    ├── 竞态条件（并发请求、快速重复提交、网络抖动）
+    ├── 破坏性测试（用户乱点、非常规操作流、浏览器回退/刷新）
+    ├── 真实数据模拟（脱敏生产数据代替纯构造数据）
+    ├── 使用 TDD Phase 0 模板
     ├── 先写测试（normal + error + edge）
     ├── 检查测试质量（testing-anti-patterns 自动伴随）
     └── 输出：测试通过
@@ -1052,6 +1061,7 @@ Phase 3 门禁：
 Phase 4 门禁：
   [ ] /health 评分 >= 7
   [ ] /retro 产出了 learnings
+  [ ] Bug 反哺完成（每个 dogfooding bug 问“为什么没测出来”）
   [ ] learnings 已 review（/learn skillify 检查）
   [ ] 未触发 /bug-reflection 的未解决问题
 
