@@ -1,4 +1,4 @@
-# 质量节拍
+﻿# 质量节拍
 
 > **开发质量不是靠检查清单堆出来的，是靠固定节奏的日常循环跑出来的。**
 >
@@ -305,7 +305,14 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
 ```
 [必] 完整 /review        → 含 Step 3.75 上下文自检 + 6 大专项
 [必] /qa                → 功能+视觉+响应式+可访问性+安全
-[必] /cso              → comprehensive mode
+│   + 视觉测试框架（Multi-Publish QM-4）：
+│       + 场景：桌面应用 UI 改完后，像素级回归验证
+│       + pre-commit：不集成（需 dev server，触发频率过高）
+│       + PR 合入前：npm run test:visual:pixel（像素对比，无需 API Key）
+│       + 发版前：npm run test:all:visual（77 个测试，45 视图 + 32 工作流）
+│       + CI：npm run test:visual:ci（AI 视觉可选，有 Key 才跑）
+│       + 本地/Agent：--single 单独验证单个视图
+
 [必] /ship              → 版本+CHANGELOG+PR
 [按需] /canary          → 灰度验证
 [按需] /browse          → dogfooding 验收
@@ -319,7 +326,12 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
 [必] /health             → 质量评分
 [必] /retro              → 技术复盘
 [必] /learn              → 经验沉淀
-[必] /ai-collaboration   → 协作能力总结
+│   + 示例：Multi-Publish 视觉测试框架开发（2026-07-12）
+│       + 改完代码后运行 /learn
+│       + 沉淀 4 条：pixel-first-visual-testing（pattern）、
+│         api-key-in-dotenv-leak（pitfall）、readme-doc-vs-code-drift（pitfall）、
+│         gitignore-subdir-for-output-dirs（preference）
+│       + 置信度 9-10，全部写入 ~/.gstack/projects/multi-publish/learnings.jsonl
 [按需] /learn skillify   → 检查是否生成新 skill
 [按需] documentation-and-adrs → ADR 归档
 ```
