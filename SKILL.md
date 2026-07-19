@@ -180,6 +180,10 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
 "产品需求不清楚"           → /office-hours Phase 2.8 + /ai-collaboration Pillar 1
 "不知道怎么用 AI"          → /ai-collaboration + /codex
 "团队协作"                 → dispatching-parallel-agents + subagent-driven-development
+"生成视频"                 → text-to-video-pipeline + batch_tts
+"文生图"                   → text-to-video-pipeline (图片生成阶段)
+"配音生成"                 → text-to-video-pipeline (TTS 阶段)
+"生成 AI 视频"             → text-to-video-pipeline + quality-gates P6
 ```
 
 ---
@@ -2025,6 +2029,204 @@ PHASE 切换但门禁未通过       → 自动降级到上一 Phase
 | 12.13 Voice & Style 规范 | Step ⑥ 协作检查 | Voice Directive |
 | 12.14 决策简报格式 | 所有决策节点 | AskUserQuestion format |
 
+## 第十二-A章：AI视频生成Pipeline质量门禁（新增）
+
+> **来源：** Story2Video text-to-video pipeline 项目实战经验总结。
+> 所有 AI 视频生成任务（T2V、文生图、配音合成）均强制执行以下门禁。
+
+### 12-A.1 API Key 调用前验证门禁（强制）
+
+**规则：** 调用任何 API 前必须验证 Key 有效性，不可用假设。
+
+```bash
+# MiniMax Key（图片生成）
+echo $env:MINIMAX_API_KEY
+# MiniMax Key 前缀 sk-cp-
+
+# MiMo Key（TTS 音色克隆）
+echo $env:MIMO_API_KEY
+# MiMo Key 前缀 sk-（无 cp-）
+
+# ❌ 错误：用 MiniMax Key 调 MiMo → 401 Unauthorized
+# ✅ 正确：严格按服务区分 Key
+```
+
+### 12-A.2 API Key 权限隔离门禁（强制）
+
+**规则：** MiniMax Key（`sk-cp-`）与 MiMo Key（`sk-` 无 cp-）严格隔离。混用返回 401。
+
+```python
+# 正确：分开调用
+if is_image_task:
+    response = minimax_client.generate(prompt)   # sk-cp-...
+else:
+    response = mimo_client.synthesize(text)       # sk-...
+```
+
+### 12-A.3 MiniMax 图片 API 响应字段门禁（强制）
+
+**规则：** MiniMax 新 API 返回 `data.image_urls[0]`（数组），旧代码取 `data.image_url` 会返回空值。
+
+```python
+# ✅ 正确：3 层兼容
+def get_image_url(result):
+    urls = result.get("data", {}).get("image_urls", [])
+    if urls:
+        return urls[0]
+    url = result.get("data", {}).get("image_url", "")
+    if url:
+        return url
+    return result.get("image_url", "")
+```
+
+### 12-A.4 TTS 时长控制门禁
+
+**优先级规则**：时长控制有 3 个选项，按优先级选用。
+
+| 优先级 | 方法 | 适用条件 | 时长来源 |
+|--------|------|---------|---------|
+| 🥇 **1st** | TTS 实际时长 | `--mode full` 已执行 | `full_tts_report.json` → `estimated_duration` |
+| 🥈 **2nd** | 字符数比例估算 | 有各场景字数 | 总时长 × (该场景字数 / 总字数) |
+| 🥉 **3rd** | 固定值兜底 | 无 TTS 报告 | 固定 6 秒/图 |
+
+```python
+# 1st: 有 full_tts_report.json
+with open("full_tts_report.json") as f:
+    tts_report = json.load(f)
+scene_info = {item["scene_id"]: item for item in tts_report["scene_durations"]}
+sd = scene_info.get(scene_index, {})
+duration = sd.get("estimated_duration", 6.0)
+
+# 2nd: 无报告但有字数
+total_chars = sum(s["chars"] for s in scenes)
+total_duration = tts_report.get("total_audio_duration", 570)
+duration = total_duration * (scenes[i]["chars"] / total_chars)
+
+# 3rd: 无任何信息，固定值兜底
+duration = 6.0
+```
+
+**⚠️ 音画不同步风险**：若 TTS 报告存在但未使用 `estimated_duration`，而用固定值替代，配音与画面会明显不同步。
+
+| 场景字数 | TTS 实际 | 固定 6s | 偏差 |
+|---------|---------|---------|------|
+| 113字 | 31.4s | 6s | 差 +25s |
+| 125字 | 34.7s | 6s | 差 +29s |
+| 86字 | 53.0s | 6s | 差 +47s |
+
+### 12-A.5 video-compositor 参数签名门禁（强制）
+
+**规则：** `SubtitleSegment` 参数名是 `start_time`/`end_time`，不是 `start`/`end`。
+
+```python
+# 正确
+SubtitleSegment(text=text, start_time=t, end_time=t+duration)
+
+# ❌ 错误（AttributeError: unexpected keyword argument 'start'）
+SubtitleSegment(text=text, start=t, end=t+duration)
+```
+
+### 12-A.6 FFmpeg Windows 路径门禁（强制）
+
+**规则：** Windows 下 FFmpeg 路径需使用正斜杠、`shell=True` 及显式 `cwd`，避免冒号被解析为选项分隔符。
+
+```python
+# ❌ 错误：subprocess.run(["ffmpeg", "-i", "d:\\path\\file.ass"])
+#     FFmpeg 把 d: 当选项分隔符 → "Unable to parse option value"
+
+# ✅ 正确：正斜杠 + shell=True + cwd
+subprocess.run(
+    f'ffmpeg -y -i "{img_path}" -i "{audio_path}" '
+    f'-filter_complex "[0:v]subtitles=\'{rel_ass}\':original_size=1280x720[v]" '
+    f'-map "[v]" -map 1:a ...',
+    shell=True,
+    cwd=BASE_DIR  # ← 正斜杠路径的工作目录
+)
+```
+
+### 12-A.7 FFmpeg zoompan 内存限制门禁
+
+**规则：** zoompan 滤镜禁止强制 upscale，应使用 `scale=1280:-1` 保比例缩放。
+
+```bash
+# ❌ 错误：scale=1920（1152x864 图片 upscale 1.67x）
+#     malloc of size 3325760 failed
+
+# ✅ 正确：scale=1280:-1（保持比例，上限 1280）
+-vf "scale=1280:-1,zoompan=z='min(zoom+0.0005,1.08)':d={n_frames}:s=1280x720:fps=30"
+```
+
+### 12-A.8 ASS 字幕文件路径门禁
+
+**规则：** ASS 文件禁止写入中文用户名 temp 目录（如 `C:\Users\邱领\...`）。必须写入项目目录，用相对路径引用。
+
+```python
+# ❌ 错误：tempfile.gettempdir() → 含中文用户名路径 → libass 解析失败
+ass_path = tempfile.mktemp(suffix=".ass")
+
+# ✅ 正确：写入项目目录
+ass_path = os.path.join(BASE_DIR, "full.ass")  # 相对路径
+```
+
+### 12-A.9 图片批处理并发限制门禁
+
+**规则：** 图片批处理须限制并发数（`Semaphore(≤3)` 或串行），禁止无限制并发触发 API 限流。
+
+```python
+# ✅ 正确：Semaphore(3) 限流
+import asyncio
+semaphore = asyncio.Semaphore(3)
+
+async def generate_one(img_prompt, semaphore):
+    async with semaphore:
+        return await minimax_client.generate(img_prompt)
+
+# ✅ 也可串行
+for prompt in prompts:
+    results.append(await generate_one(prompt, semaphore))
+
+# ❌ 错误：无限制并发
+await asyncio.gather(*[generate_one(p) for p in prompts])
+```
+
+### 12-A.10 敏感内容 1026 错误自动重试门禁
+
+**规则：** MiniMax 触发敏感内容过滤（错误码 1026）时，自动替换敏感词重试，不修改原始提示词。
+
+```python
+SENSITIVE_REPLACEMENTS = {
+    "blood": "tears",
+    "massacre": "uprising",
+    "kill": "fall",
+    "death": "loss",
+    "slaughter": "expulsion",
+}
+
+def safe_prompt(prompt):
+    safe = prompt
+    for word, replacement in SENSITIVE_REPLACEMENTS.items():
+        safe = safe.replace(word, replacement)
+    return safe
+
+# 调用：若返回 1026，用 safe_prompt(original) 重试
+```
+
+### 12-A.11 视频合成前置校验门禁
+
+**规则：** 视频合成前必须校验输入文件存在且大小 > 50KB。
+
+```python
+def validate_inputs(video_only, tts_audio, ass_file):
+    for path in [video_only, tts_audio, ass_file]:
+        assert os.path.exists(path), f"文件不存在: {path}"
+        assert os.path.getsize(path) > 50 * 1024, f"文件过小: {path}"
+
+# FFmpeg concat 列表文件必须无 BOM UTF-8
+with open(concat_list, "w", encoding="utf-8") as f:
+    for clip in clips:
+        f.write(f"file '{clip}'\n")
+```
+
 ## 附录：版本变更
 
 ### 2026-07 重大更新
@@ -2033,6 +2235,8 @@ PHASE 切换但门禁未通过       → 自动降级到上一 Phase
 ### 2026-07-15 新增（gstack 深度集成）
 
 - 触发方式 D：会话起始自动门禁检查 — 新任务自动判断变更类型并路由到正确 Phase
+- 第十二-A章：AI视频生成Pipeline质量门禁（11条门禁 + text-to-video skill 集成）
+- 触发方式 C 新增 text-to-video 场景映射（文生图、配音、AI视频）
 - Completeness 完整性评分体系（12.1）
 - 6 条自动决策原则（12.2）
 - Taste Decision 品味决策系统（12.3）
