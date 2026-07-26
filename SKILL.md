@@ -1,7 +1,44 @@
 ---
 name: quality-rhythm
-description: 质量节拍 — 所有开发/产品/需求/设计/测试/文档/管理任务的门禁强制执行系统。自动覆盖：开发、重构、产品需求、UX设计、测试计划、Bug修复、技术调研、架构设计、代码审查、部署上线、性能优化、安全审计、配置修改、项目管理、复盘总结等所有任务类型。每次会话首次任务自动执行门禁检查（触发方式D），判断变更类型和规模后路由到对应Phase。集成57+技能（gstack/superpowers/addy-agent），15项gstack优化。触发词：质量节拍、quality rhythm、门禁、流程、日常循环、阶段检查
+description: 质量节拍 — 所有开发、产品、需求、设计、测试、文档与管理任务的门禁强制执行系统。
+type: workflow
 ---
+
+## 强制触发规则（MUST）
+
+> **所有涉及代码修改的任务，无论规模大小，都必须强制触发质量节拍。**
+
+### 触发条件（满足任一即触发）
+
+| 触发类型 | 具体场景 | 强制动作 |
+|---------|---------|---------|
+| **代码修改** | 编辑现有文件、创建新文件、删除文件 | 自动触发质量节拍 |
+| **用户请求** | 提到实现、修复、重构、优化、添加等动词 | 自动触发质量节拍 |
+| **功能相关** | 提到具体功能名称（如登录、发布、设置） | 自动触发质量节拍 |
+| **Bug修复** | 报错排查、行为异常、紧急修复 | 自动触发质量节拍 |
+| **新功能** | 全新模块、特性添加、功能扩展 | 自动触发质量节拍 |
+| **重构** | 代码结构调整、性能优化、安全加固 | 自动触发质量节拍 |
+| **配置变更** | 环境配置、CI/CD、依赖调整 | 自动触发质量节拍 |
+| **文档变更** | README、API文档、使用说明 | 自动触发质量节拍 |
+
+### 自动检测机制
+
+在执行任何代码修改前，AI必须自动检查：
+
+1. **文件修改检测**：即将执行 apply_patch、git add、git commit 等操作
+2. **用户意图检测**：用户消息包含代码相关关键词
+3. **任务类型检测**：当前任务涉及代码实现、修复、优化等
+
+**检测到任一条件 → 立即触发质量节拍，不等待用户确认。**
+
+### 违反后果
+
+- **未触发质量节拍的代码修改**：不允许提交
+- **跳过质量节拍流程**：Code Review 打回
+- **绕过强制检查**：视为流程违规
+
+---
+
 # 质量节拍
 
 > **开发质量不是靠检查清单堆出来的，是靠固定节奏的日常循环跑出来的。**
@@ -162,6 +199,8 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
 你说                        AI 调用
 ──────────────────────────────────────────────────
 "出 bug 了"                → /investigate + systematic-debugging
+"查一下这个 bug 为什么没测出来"  → Bug 反思循环 Step ② 逃逸分析 + Step ③ 系统性漏洞定位
+"做 bug 反哺"                  → Bug 反思循环 5 步完整执行（根因溯源 → 逃逸链 → 系统性漏洞 → 回归保护测试 → 预防措施）
 "帮我想个方案"              → /office-hours → /plan-ceo-review
 "审查一下"                  → /review + code-review-and-quality
 "出安全审计"               → /cso + /guard
@@ -174,28 +213,22 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
 "优化性能"                 → performance-optimization
 "做设计系统"               → design-consultation
 "写文档"                   → /document-release
-"查一下这个 bug 为什么没测出来" → Bug 反思循环 Step ② 逃逸分析
-"做 bug 反哺"               → Bug 反思循环 5 步完整执行
 "做市场营销"               → /office-hours (builder mode)
 "产品需求不清楚"           → /office-hours Phase 2.8 + /ai-collaboration Pillar 1
 "不知道怎么用 AI"          → /ai-collaboration + /codex
 "团队协作"                 → dispatching-parallel-agents + subagent-driven-development
-"生成视频"                 → text-to-video-pipeline + batch_tts
-"文生图"                   → text-to-video-pipeline (图片生成阶段)
-"配音生成"                 → text-to-video-pipeline (TTS 阶段)
-"生成 AI 视频"             → text-to-video-pipeline + quality-gates P6
 ```
 
 ---
 
-### 触发方式 D：会话起始自动门禁检查（新增）
-
+### 触发方式 D：代码修改任务自动门禁检查（增强版）
+在任何涉及代码修改的任务开始时，无论你怎么描述，AI 自动执行一次任务门禁检查，判断变更性质和规模后路由到合适的 Phase：**每个代码修改任务都必须触发，不例外。**
 在任何新任务的起始点，无论你怎么描述，AI 自动执行一次"任务门禁检查"，判断变更性质和规模后路由到合适的 Phase：
 
 ```
-你开始一个新任务（无论你怎么说）
+你开始一个涉及代码修改的任务（无论你怎么说）
     │
-    ▼
+⚠️ 自动门禁检查（每个代码修改任务必须触发）
 ⚠️ 自动门禁检查（当前会话首次任务自动触发）
 
     ├── 1️⃣ 变更类型判断（覆盖所有任务类型）
@@ -204,6 +237,17 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
     │   ├── 🐛 Bug 修复（报错排查、行为异常、紧急修复）
     │   ├── 📦 新增功能（全新模块、特性添加、功能扩展）
     │   ├── 🔧 配置/工具变更（环境配置、CI/CD、依赖调整、工具链）
+
+**Bug修复强制流程（QM-5）：**
+
+1. **找到第一性原因**：不修表面，找到最原始的代码改动引入点
+2. **追溯测试逃逸**：这个Bug逃过了哪些测试？为什么逃过？
+3. **识别系统性漏洞**：找到具体的系统性漏洞
+4. **修复 + 回归保护测试**：修复方案 + 回归保护测试
+5. **防止再次发生**：具体系统性措施
+
+**违反后果：** 修复Bug的PR/提交必须包含以上5步的产出物，否则不允许合并。
+
     │   ├── 📝 纯文档变更（README、API文档、使用说明、注释）
     │   ├── 🎯 产品需求变更（PRD修改、需求确认、功能定义）
     │   ├── 🔬 技术调研/选型（框架对比、技术预研、POC验证）
@@ -224,13 +268,10 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
     │   ├── 🎨 UI 变更 + 非紧急 → "这个涉及 UI 改造，需要先跑一轮 /plan-design-review 吗？"
     │   ├── 🏗️ 架构/API 变更 + 非紧急 → "涉及架构调整，需要先跑 /plan-eng-review 吗？"
     │   ├── 👨‍💻 API/SDK/Adapter 变更 → "开发者体验审查 (/plan-devex-review) 需要先跑吗？"
-    │   ├── 🐛 Bug 修复（含完整 Bug 反哺循环）
-    │   ├── 紧急（P0/P1）→ ⚡ 热修复通道（事后补 5 步反哺）
-    │   ├── 非紧急 → 执行 Bug 反思循环（10.5）5 步完整 SOP
-    │   └── 门禁：逃逸链 + 回归保护测试 + 预防措施 → 缺一不可
+    │   ├── 🐛 Bug 修复（非紧急）→ "执行 Bug 反思循环 5 步完整 SOP（根因溯源 + 逃逸链 + 系统性漏洞 + 回归保护测试 + 预防措施）？"
     │   ├── 📦 新增功能 → "需要先出 PRD/方案吗？"
     │   ├── 🌱 微小变更 → "看起来改动不大，用轻量模式？"
-    │   ├── 🔥 紧急修复 → ⚡ "走热修复通道？"
+    │   ├── 🔥 紧急修复（P0/P1）→ ⚡ "走热修复通道？"（事后补 5 步反哺）
     │   └── ❓ 类型不确定 → Confusion Protocol
     │
     └── 4️⃣ 用户确认后开始执行
@@ -255,7 +296,7 @@ PHASE 结束                  → "要跑 /health + /retro 全身体检吗？"
 🔐 安全/合规变更                  Phase 2.3 /cso + /guard
 📊 性能优化                       Phase 5.2 /benchmark + performance-optimization
 🌱 微小变更（< 50 行）            @质量节拍 轻量模式
-🔥 紧急修复（P0/P1）              @质量节拍 热修复通道
+🔥 紧急修复（P0/P1）       热修复通道（事后补 5 步反哺）
 ⚠️ 涉及前端 UI 文件               ⚡ 自动触发视觉回归检查
 ```
 
@@ -419,7 +460,14 @@ Phase 3 门禁  → /qa 中 [必] 视觉回归测试
 ⑥ AI 协作质量检查（文章：AI 协作能力 — 新技能）
     ├── 用 /ai-collaboration Pillar 3 checklist 自检
     ├── 记录本次协作经验
-    └── 输出：协作质量评分
+    │
+    ├── Bug 回溯检查（新增）：
+    │   ├── 本次会话有没有发现新的 bug？→ 有 → 触发 Bug 反思循环（10.5）
+    │   ├── 本次改动会不会引入之前修过的同类 bug？
+    │   │   └── 可能 → 检查对应回归测试还在不在、是否仍通过
+    │   └── 参考 learnings 中的 pitfall 类型记录，确认未触发已知错误模式
+    │
+    └── 输出：协作质量评分 + Bug 回溯状态
     │
     ▼
 回到 ①，进入下一个子任务
@@ -710,10 +758,6 @@ Step ⑥ 协作质量：
   - 我给了 AI 什么上下文？
   - AI 输出质量如何？
   - 下次怎么改进？
-  - Bug 回溯检查（每次子任务完成后）：
-    ├── 本次会话有没有发现新的 bug？→ 有 → 触发 Bug 反思循环（10.5）
-    ├── 本次改动会不会引入之前修过的同类 bug？→ 可能 → 检查对应回归测试还在不在
-    └── 参考 learnings 中的 pitfall 类型记录，确认未触发已知模式
 ```
 
 ---
@@ -1140,100 +1184,109 @@ L2 架构师最终审查 → merge
 - 审查聚焦在**接口兼容性**和**跨模块影响**，不在编码细节
 - 编码细节由 Step ④ `/review` 自动处理
 
-### 10.5 Bug 反思循环（增强版 — 5 步 SOP）
+### 10.5 Bug 反思循环（增强版 — 5 步完整 SOP）
 
-发现 bug，触发质量节拍的 **Bug 反思循环**：
+> 发现 Bug 或被告知 Bug 时，**必须**按以下 5 步执行，不修表面、追根溯源。
+> 与 AGENTS.md QM-5 完全对齐，确保 Skill 层和项目层规则一致。
 
 ```
 发现 bug
     │
     ▼
-① 根因溯源（第一性原因）
-    ├── 不要只修表面，找到 Bug 的**第一性原因**
-    ├── 用 git blame / git log 追溯**最原始的代码改动引入点**
-    │   └── 示例：不是"函数返回 undefined"，而是
-    │       "2026-06-15 commit abc123 引入的 null 合并运算符"
-    └── 确认该次改动的意图（重构 / 修另一个 bug / 新功能？）
+① 第一性原因溯源（不修表面）
+    ├── 这个 Bug 最原始的代码改动引入点是什么？
+    ├── 用 git log + git blame 追溯：哪次提交引入的？当时的意图是什么？
+    ├── 明确回答：为什么这段代码会写成这样？
+    │   ├── 理解错误 / 复制粘贴 / 环境假设不成立
+    │   └── 缺少 review / 工具链缺陷 / 文档过时
+    │
+    └── 门禁：必须追溯到具体 commit hash，不能停在"代码写错了"
     │
     ▼
-② 逃逸分析（核心环节）
-    ├── 追溯这个 Bug 逃过了哪些测试？
-    │   ├── 单元测试？→ 为什么没拦住？场景没覆盖？边界值没列？Mock 不正确？
-    │   ├── 集成测试？→ 为什么没拦住？跨模块交互没测？数据流场景缺失？
-    │   ├── 端到端测试？→ 为什么没拦住？业务流程没覆盖？环境差异？
-    │   ├── 视觉回归测试？→ 为什么没拦住？UI 变化没截图？diff 阈值太宽松？
-    │   └── 代码审查？→ 为什么没拦住？审查者没注意到？审查清单没这项？
+② 测试逃逸分析（追溯逃逸链）
+    ├── 这个 Bug 逃过了哪些测试？逐层列出：
+    │   ├── 单元测试层：有没有对应的单元测试？
+    │   ├── 集成测试层：有没有覆盖该场景？
+    │   ├── E2E/视觉测试层：有没有端到端验证？
+    │   └── 代码审查层：review 时为什么没发现？
     │
-    ├── 输出格式：「Bug 逃逸链」—— 按测试层级逐层列出每层为什么没拦住
-    │   └── 示例：
-    │       单元测试 → Mock 过度（网络层全 Mock，未测超时场景）
-    │       集成测试 → 缺失（该模块无集成测试）
-    │       代码审查 → 审查清单无"IPC 参数序列化"条目
+    ├── 逃过的原因分类（5 类）：
+    │   ├── 无测试 —— 根本没有针对该场景的测试
+    │   ├── Mock 过度 —— Mock 掉了真实依赖，问题在 Mock 边界之外
+    │   ├── 测试不执行 —— 测试写好了但未集成到 CI / npm test
+    │   ├── 断言不精确 —— 测试通过了但没验证关键行为
+    │   └── 环境差异 —— 测试环境与生产环境不一致（如 DB 引擎版本）
     │
-    └── 门禁：逃逸链不完整 → ❌ 不能进入下一步
+    └── 门禁：必须按测试层级列出逃逸链，不能只说"测试没覆盖"
     │
     ▼
-③ 系统性漏洞定位（核心环节）
-    ├── 在现有测试机制里找到**具体的系统性漏洞**
-    ├── 分类（四类机制漏洞）：
-    │   ├── 测试场景缺失 — 某种类型场景从未被脑暴过
-    │   ├── 测试质量不足 — 测试写了但没测到点（mock 太假 / assert 太少）
-    │   ├── 审查盲区 — 审查清单没覆盖这类问题
-    │   └── 流程缺失 — 质量节拍某一步根本没执行
+③ 系统性漏洞定位
+    ├── 在现有测试机制里找到具体的系统性漏洞
+    ├── 必须具体到：
+    │   ├── 哪个文件（具体路径）
+    │   ├── 哪个测试框架 / 环节
+    │   └── 什么系统性缺陷（如：所有 IPC mock 都跳过了序列化验证）
     │
-    ├── 输出格式：「系统性漏洞报告」
-    │   └── 示例：
-    │       类型：测试场景缺失
-    │       根因：脑暴模板无"IPC 参数序列化"类别
-    │       影响范围：所有涉及 IPC 的功能模块
+    ├── 漏洞分类模板：
+    │   ├── 测试覆盖漏洞 —— 某类文件/场景完全没有测试
+    │   ├── Mock 边界漏洞 —— Mock 与真实行为不一致
+    │   ├── 门禁缺失漏洞 —— 某类变更没有自动化检查
+    │   └── 工具链漏洞 —— 工具本身不提供安全检查（如 MCP 无编译验证）
     │
-    └── 门禁：漏洞未定位 → ❌ 不能进入下一步
+    └── 门禁：必须输出具体的漏洞描述 + 文件路径，不能泛泛说"测试不够"
     │
     ▼
 ④ 修复 + 回归保护测试
-    ├── 修复方案（最小改动 + 副作用检查）
-    │
-    ├── **回归保护测试**（必须明确以下三项）：
+    ├── 修复方案（代码变更）
+    ├── 回归保护测试（新增明确要求）：
     │   ├── 测试怎么写：描述测试场景 + 断言逻辑 + 边界值
-    │   ├── 放在哪个文件：具体相对路径
-    │   └── 用什么模式：单元测试 / 集成测试 / E2E / 视觉回归
+    │   ├── 放在哪个文件：{被测文件}.test.js，与被测文件同目录
+    │   ├── 用什么模式：单元测试 / 集成测试 / E2E / 视觉回归
+    │   └── 要求：用真实依赖（非 Mock），验证 Bug 的具体场景不会复现
     │
-    ├── 示例：
-    │   文件：apps/desktop/electron/services/model-provider-manager.test.js
-    │   模式：单元测试
-    │   场景：调用 updateProvider 传入 reactive proxy 包装的对象
-    │   断言：应自动脱壳后传 IPC，不报 "An object could not be cloned"
-    │
-    └── 门禁：没有回归保护测试 → ❌ 不能合入
+    └── 门禁：没有回归保护测试 → 不能合入
     │
     ▼
-⑤ 预防措施（闭环落地）
-    ├── 怎么防止再次发生：
-    │   ├── 更新测试场景脑暴模板 — 补充缺失的类别
-    │   ├── 更新审查清单 — 增加检查条目
-    │   ├── 更新质量节拍流程 — 如果发现流程漏洞
-    │   └── 写入 learnings（/learn）— 类型: pitfall，关联文件路径
+⑤ 预防措施（防止再次发生）
+    ├── 必须有具体的系统性措施，不能只说"以后注意"
+    ├── 至少落地以下一项：
+    │   ├── 更新 AGENTS.md QM 规则 — 增加检查条目
+    │   ├── 更新 01-docs/learnings.md — 记录根因和教训（/learn）
+    │   ├── 增加自动化测试 — 回归测试写入 CI
+    │   └── 增加代码检查 — lint 规则 / pre-commit hook
     │
-    ├── 输出格式：「预防措施清单」
-    │   └── 示例：
-    │       [ ] 更新 .quality-gates.md — 新增"IPC 参数序列化"检查项
-    │       [ ] 更新 AGENTS.md QM-2 — 补充 Vue reactive proxy 规则
-    │       [ ] 写入 01-docs/learnings.md — pitfall 类型
-    │
-    └── 门禁：预防措施未落地 → ❌ 不得关闭 bug 单
+    └── 门禁：预防措施未落地 → 不得关闭 bug
     │
     ▼
 ⑥ 执行验证
     ├── 修代码 → 补回归测试 → 实施预防措施
-    └── 标记为"已修复 + 已反哺"（cross-session 可查）
+    ├── 标记为"已修复 + 已反哺"（cross-session 可查）
+    └── 输出格式：Bug 反思报告（5 步产出物汇总）
 ```
 
-**集成到日常循环：** Step ⑥ 在完成一个子任务后，自动检查当前会话有没有发现新的 bug，有则触发反思循环。
+**与旧版 4 步结构的差异：**
 
-**逃逸链完整性检查（门禁）：**
-- 逃逸链必须覆盖至少 2 个测试层级
-- 每层必须给出具体原因（不能"没测到"这种模糊描述）
-- 回归保护测试必须写明具体文件路径和测试模式
+| 维度 | 旧版（4 步） | 新版（5 步） |
+|------|-------------|-------------|
+| 根因深度 | 5 Whys 问"为什么" | git blame 追溯到**具体 commit** |
+| 测试逃逸 | 一句话"为什么没测出来" | 按测试层级逐层输出**逃逸链** |
+| 漏洞定位 | 四维分类（PRD/代码/测试/流程） | 分类定位**具体文件 + 系统性缺陷** |
+| 回归保护 | "补测试" | 明确**写在哪个文件 + 怎么测 + 用什么模式** |
+| 预防闭环 | "生成改进措施" | 落地到**具体文件变更 + learnings 写入** |
+| 门禁强度 | 1 条检查 | **5 步逐项门禁**，缺一不可 |
+
+**集成到日常循环：** Step ⑥ 在完成一个子任务后，自动检查当前会话有没有发现新的 bug，有则触发 5 步反思循环。
+
+**触发命令（场景映射）：**
+- "这个 bug 为什么没测出来" → ② 逃逸分析
+- "做 bug 反哺" → 5 步完整执行
+- "Bug 反思" → 5 步完整执行
+```
+
+**触发时机：**
+- Phase 0 调研前自动进入（用户说"帮我分析一下X"）
+- 任务涉及陌生领域或不确定方案时
+- 项目重大决策时由 L2 架构师触发
 
 ### 10.9 AI 工具修改完整性校验（来自 Bug 反思 2026-07-17）
 
@@ -1328,12 +1381,7 @@ Phase 3 门禁：
 Phase 4 门禁：
   [ ] /health 评分 >= 7
   [ ] /retro 产出了 learnings
-  Bug 反哺完成（每个 bug 完整执行 5 步 SOP）：
-    ✅ ① 根因溯源 —— 第一性引入点已确认
-    ✅ ② 逃逸分析 —— 逃逸链已列出（每层测试为什么没拦住）
-    ✅ ③ 系统性漏洞 —— 测试机制漏洞已定位并分类
-    ✅ ④ 回归保护测试 —— 已写入具体文件
-    ✅ ⑤ 预防措施 —— 已落地到文件变更
+  [ ] Bug 反哺完成（每个 dogfooding bug 问“为什么没测出来”）
   [ ] learnings 已 review（/learn skillify 检查）
   [ ] 未触发 /bug-reflection 的未解决问题
 
@@ -1383,15 +1431,15 @@ Phase 2-mini: 最小日常循环
 Phase 3: 直接发布（灰度加速）
   /ship → /land-and-deploy（跳过完整 /review）
           ↓
-Phase 4-mini: 事后补复盘（增强版 Bug 反哺）
+Phase 4-mini: 事后补复盘（增强版 Bug 反哺 — 5 步完整 SOP）
   【门禁】以下 5 步全部完成才可关闭热修复单：
-    ✅ ① 根因溯源 —— 找到第一性引入点（git blame 追溯到具体 commit）
-    ✅ ② 逃逸分析 —— 按测试层级列出逃逸链（每层为什么没拦住）
-    ✅ ③ 系统性漏洞 —— 找到测试机制的具体漏洞（四类分类）
-    ✅ ④ 回归保护测试 —— 写在哪个文件、怎么测、用什么模式
-    ✅ ⑤ 预防措施 —— 落地到具体文件变更（审查清单/测试模板/learnings）
-  /bug-reflection（焦点：“这个 bug 为什么之前的测试没抓到？”）→ 更新测试场景库
-  【门禁】Bug 反哺未完成 → 不得关闭热修复单
+    ✅ ① 根因溯源 —— 找到第一性引入点（原始 commit）
+    ✅ ② 逃逸分析 —— 按测试层级输出逃逸链
+    ✅ ③ 系统性漏洞 —— 找到测试机制的具体漏洞并分类
+    ✅ ④ 回归保护测试 —— 写在哪个文件 + 怎么测 + 什么模式
+    ✅ ⑤ 预防措施 —— 落地到具体文件变更
+  焦点："这个 bug 为什么之前的测试没抓到？"→ 更新测试场景库
+  【门禁】Bug 反哺 5 步未完成 → 不得关闭热修复单
 `
 
 **规则**：热修复通道只用于 P0/P1 问题，事后必须补 Phase 4 复盘。
@@ -2029,204 +2077,6 @@ PHASE 切换但门禁未通过       → 自动降级到上一 Phase
 | 12.13 Voice & Style 规范 | Step ⑥ 协作检查 | Voice Directive |
 | 12.14 决策简报格式 | 所有决策节点 | AskUserQuestion format |
 
-## 第十二-A章：AI视频生成Pipeline质量门禁（新增）
-
-> **来源：** Story2Video text-to-video pipeline 项目实战经验总结。
-> 所有 AI 视频生成任务（T2V、文生图、配音合成）均强制执行以下门禁。
-
-### 12-A.1 API Key 调用前验证门禁（强制）
-
-**规则：** 调用任何 API 前必须验证 Key 有效性，不可用假设。
-
-```bash
-# MiniMax Key（图片生成）
-echo $env:MINIMAX_API_KEY
-# MiniMax Key 前缀 sk-cp-
-
-# MiMo Key（TTS 音色克隆）
-echo $env:MIMO_API_KEY
-# MiMo Key 前缀 sk-（无 cp-）
-
-# ❌ 错误：用 MiniMax Key 调 MiMo → 401 Unauthorized
-# ✅ 正确：严格按服务区分 Key
-```
-
-### 12-A.2 API Key 权限隔离门禁（强制）
-
-**规则：** MiniMax Key（`sk-cp-`）与 MiMo Key（`sk-` 无 cp-）严格隔离。混用返回 401。
-
-```python
-# 正确：分开调用
-if is_image_task:
-    response = minimax_client.generate(prompt)   # sk-cp-...
-else:
-    response = mimo_client.synthesize(text)       # sk-...
-```
-
-### 12-A.3 MiniMax 图片 API 响应字段门禁（强制）
-
-**规则：** MiniMax 新 API 返回 `data.image_urls[0]`（数组），旧代码取 `data.image_url` 会返回空值。
-
-```python
-# ✅ 正确：3 层兼容
-def get_image_url(result):
-    urls = result.get("data", {}).get("image_urls", [])
-    if urls:
-        return urls[0]
-    url = result.get("data", {}).get("image_url", "")
-    if url:
-        return url
-    return result.get("image_url", "")
-```
-
-### 12-A.4 TTS 时长控制门禁
-
-**优先级规则**：时长控制有 3 个选项，按优先级选用。
-
-| 优先级 | 方法 | 适用条件 | 时长来源 |
-|--------|------|---------|---------|
-| 🥇 **1st** | TTS 实际时长 | `--mode full` 已执行 | `full_tts_report.json` → `estimated_duration` |
-| 🥈 **2nd** | 字符数比例估算 | 有各场景字数 | 总时长 × (该场景字数 / 总字数) |
-| 🥉 **3rd** | 固定值兜底 | 无 TTS 报告 | 固定 6 秒/图 |
-
-```python
-# 1st: 有 full_tts_report.json
-with open("full_tts_report.json") as f:
-    tts_report = json.load(f)
-scene_info = {item["scene_id"]: item for item in tts_report["scene_durations"]}
-sd = scene_info.get(scene_index, {})
-duration = sd.get("estimated_duration", 6.0)
-
-# 2nd: 无报告但有字数
-total_chars = sum(s["chars"] for s in scenes)
-total_duration = tts_report.get("total_audio_duration", 570)
-duration = total_duration * (scenes[i]["chars"] / total_chars)
-
-# 3rd: 无任何信息，固定值兜底
-duration = 6.0
-```
-
-**⚠️ 音画不同步风险**：若 TTS 报告存在但未使用 `estimated_duration`，而用固定值替代，配音与画面会明显不同步。
-
-| 场景字数 | TTS 实际 | 固定 6s | 偏差 |
-|---------|---------|---------|------|
-| 113字 | 31.4s | 6s | 差 +25s |
-| 125字 | 34.7s | 6s | 差 +29s |
-| 86字 | 53.0s | 6s | 差 +47s |
-
-### 12-A.5 video-compositor 参数签名门禁（强制）
-
-**规则：** `SubtitleSegment` 参数名是 `start_time`/`end_time`，不是 `start`/`end`。
-
-```python
-# 正确
-SubtitleSegment(text=text, start_time=t, end_time=t+duration)
-
-# ❌ 错误（AttributeError: unexpected keyword argument 'start'）
-SubtitleSegment(text=text, start=t, end=t+duration)
-```
-
-### 12-A.6 FFmpeg Windows 路径门禁（强制）
-
-**规则：** Windows 下 FFmpeg 路径需使用正斜杠、`shell=True` 及显式 `cwd`，避免冒号被解析为选项分隔符。
-
-```python
-# ❌ 错误：subprocess.run(["ffmpeg", "-i", "d:\\path\\file.ass"])
-#     FFmpeg 把 d: 当选项分隔符 → "Unable to parse option value"
-
-# ✅ 正确：正斜杠 + shell=True + cwd
-subprocess.run(
-    f'ffmpeg -y -i "{img_path}" -i "{audio_path}" '
-    f'-filter_complex "[0:v]subtitles=\'{rel_ass}\':original_size=1280x720[v]" '
-    f'-map "[v]" -map 1:a ...',
-    shell=True,
-    cwd=BASE_DIR  # ← 正斜杠路径的工作目录
-)
-```
-
-### 12-A.7 FFmpeg zoompan 内存限制门禁
-
-**规则：** zoompan 滤镜禁止强制 upscale，应使用 `scale=1280:-1` 保比例缩放。
-
-```bash
-# ❌ 错误：scale=1920（1152x864 图片 upscale 1.67x）
-#     malloc of size 3325760 failed
-
-# ✅ 正确：scale=1280:-1（保持比例，上限 1280）
--vf "scale=1280:-1,zoompan=z='min(zoom+0.0005,1.08)':d={n_frames}:s=1280x720:fps=30"
-```
-
-### 12-A.8 ASS 字幕文件路径门禁
-
-**规则：** ASS 文件禁止写入中文用户名 temp 目录（如 `C:\Users\邱领\...`）。必须写入项目目录，用相对路径引用。
-
-```python
-# ❌ 错误：tempfile.gettempdir() → 含中文用户名路径 → libass 解析失败
-ass_path = tempfile.mktemp(suffix=".ass")
-
-# ✅ 正确：写入项目目录
-ass_path = os.path.join(BASE_DIR, "full.ass")  # 相对路径
-```
-
-### 12-A.9 图片批处理并发限制门禁
-
-**规则：** 图片批处理须限制并发数（`Semaphore(≤3)` 或串行），禁止无限制并发触发 API 限流。
-
-```python
-# ✅ 正确：Semaphore(3) 限流
-import asyncio
-semaphore = asyncio.Semaphore(3)
-
-async def generate_one(img_prompt, semaphore):
-    async with semaphore:
-        return await minimax_client.generate(img_prompt)
-
-# ✅ 也可串行
-for prompt in prompts:
-    results.append(await generate_one(prompt, semaphore))
-
-# ❌ 错误：无限制并发
-await asyncio.gather(*[generate_one(p) for p in prompts])
-```
-
-### 12-A.10 敏感内容 1026 错误自动重试门禁
-
-**规则：** MiniMax 触发敏感内容过滤（错误码 1026）时，自动替换敏感词重试，不修改原始提示词。
-
-```python
-SENSITIVE_REPLACEMENTS = {
-    "blood": "tears",
-    "massacre": "uprising",
-    "kill": "fall",
-    "death": "loss",
-    "slaughter": "expulsion",
-}
-
-def safe_prompt(prompt):
-    safe = prompt
-    for word, replacement in SENSITIVE_REPLACEMENTS.items():
-        safe = safe.replace(word, replacement)
-    return safe
-
-# 调用：若返回 1026，用 safe_prompt(original) 重试
-```
-
-### 12-A.11 视频合成前置校验门禁
-
-**规则：** 视频合成前必须校验输入文件存在且大小 > 50KB。
-
-```python
-def validate_inputs(video_only, tts_audio, ass_file):
-    for path in [video_only, tts_audio, ass_file]:
-        assert os.path.exists(path), f"文件不存在: {path}"
-        assert os.path.getsize(path) > 50 * 1024, f"文件过小: {path}"
-
-# FFmpeg concat 列表文件必须无 BOM UTF-8
-with open(concat_list, "w", encoding="utf-8") as f:
-    for clip in clips:
-        f.write(f"file '{clip}'\n")
-```
-
 ## 附录：版本变更
 
 ### 2026-07 重大更新
@@ -2235,8 +2085,6 @@ with open(concat_list, "w", encoding="utf-8") as f:
 ### 2026-07-15 新增（gstack 深度集成）
 
 - 触发方式 D：会话起始自动门禁检查 — 新任务自动判断变更类型并路由到正确 Phase
-- 第十二-A章：AI视频生成Pipeline质量门禁（11条门禁 + text-to-video skill 集成）
-- 触发方式 C 新增 text-to-video 场景映射（文生图、配音、AI视频）
 - Completeness 完整性评分体系（12.1）
 - 6 条自动决策原则（12.2）
 - Taste Decision 品味决策系统（12.3）
@@ -2272,4 +2120,3 @@ with open(concat_list, "w", encoding="utf-8") as f:
 - 新增 /ai-collaboration 技能集成
 - 场景映射表从 24 个扩展到 32 个
 - 注入文章所有核心方法论
-
