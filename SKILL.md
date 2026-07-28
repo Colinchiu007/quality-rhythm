@@ -135,7 +135,7 @@ type: workflow
 | **Superpowers (11)** | subagent-driven-development, executing-plans, writing-plans, requesting-code-review, receiving-code-review, dispatching-parallel-agents, finishing-a-development-branch, systematic-debugging, root-cause-tracing, verification-before-completion, test-driven-development, testing-anti-patterns, condition-based-waiting, remembering-conversations, using-git-worktrees, brainstorming, defense-in-depth |
 | **Addy-Agent (15)** | planning-and-task-breakdown, spec-driven-development, incremental-implementation, code-review-and-quality, idea-refine, shipping-and-launch, ci-cd-and-automation, documentation-and-adrs, source-driven-development, doubt-driven-development, code-simplification, context-engineering, api-and-interface-design, frontend-ui-engineering, performance-optimization, observability-and-instrumentation, security-and-hardening, git-workflow-and-versioning, deprecation-and-migration, interview-me |
 | **Spec Kit 集成 (1 Preset)** | quality-rhythm-sdd: Spec Kit Preset，增强 spec-template / plan-template / clarify / checklist |
-| **总计** | **57 个技能 + 1 Spec Kit Preset** |
+| **总计** | **57 个技能 + 1 Spec Kit Preset + awesome-cursorrules 引用** |
 
 ---
 
@@ -625,7 +625,7 @@ Phase 3 门禁  → /qa 中 [必] 视觉回归测试
 | Skill | 文章对应 | 在全流程中的位置 | 集成方式 |
 |-------|---------|-----------------|---------|
 | **planning-and-task-breakdown** | "拆解功能" | Phase 1.3 | 验收标准+可独立测试 |
-| **spec-driven-development** | "理解需求→设计方案" | Phase 0.3→1.1 | 先写规范再编码；可通过 quality-rhythm-sdd Preset 增强 UI/交互/TDD 规格 |
+| **spec-driven-development** | "理解需求→设计方案" | Phase 0.3→1.1 | 先写规范再编码；可通过 quality-rhythm-sdd Preset 增强 UI/交互/TDD 规格；编码阶段可通过 awesome-cursorrules 规则文件约束 |
 | **incremental-implementation** | "小步开发" | Phase 2→③ | 薄垂直切片+边界检查 |
 | **code-review-and-quality** | "代码审查" | Phase 2→④ | 五轴审查 |
 | **idea-refine** | "需求拆解" | Phase 0.1 | 发散收敛+压力测试 |
@@ -699,6 +699,52 @@ specify preset add --dev <path-to-quality-rhythm-repo>/presets/quality-rhythm-sd
 - "写个完整的 PRD"
 
 ---
+
+
+## 第 5.5 节：awesome-cursorrules 编码规范集成
+
+质量节拍的 **Phase 0（探索期）** 和 **Phase 1（规划期）** 关注需求和架构，
+**Phase 2（开发期）** 关注编码质量。[awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules)
+提供 170+ 个框架特定的 `.cursorrules` / `.mdc` 规则文件，可用于 Phase 2 的编码约束。
+
+### 与质量节拍的阶段映射
+
+| 质量节拍阶段 | awesome-cursorrules 对应 | 用途 |
+|-------------|------------------------|------|
+| Phase 0 探索期 | — | 不涉及编码 |
+| Phase 1 规划期 | — | 不涉及编码 |
+| Phase 2 开发期 | 框架规则文件 | 编码约束、最佳实践、反模式规避 |
+| Phase 3 交付期 | — | 不涉及编码 |
+| Phase 4 复盘期 | — | 不涉及编码 |
+
+### 推荐规则文件（按项目类型）
+
+| 项目类型 | 推荐规则文件 | 说明 |
+|---------|------------|------|
+| React/Next.js | `react-nextjs.mdc` | React + Next.js 最佳实践 |
+| Vue/Nuxt | `vue-nuxt.mdc` | Vue 3 + Nuxt 3 规范 |
+| Python/FastAPI | `python-fastapi.mdc` | FastAPI 后端规范 |
+| Python/Django | `python-django.mdc` | Django 后端规范 |
+| TypeScript | `typescript.mdc` | TypeScript 通用规范 |
+| CSS/Tailwind | `tailwind-css.mdc` | Tailwind CSS 规范 |
+| 测试 | `testing.mdc` | 测试最佳实践 |
+| 安全 | `security.mdc` | 安全编码规范 |
+
+### 安装方式
+
+```bash
+# 方式 1：直接复制规则文件到项目根目录
+cp rules/<framework>.mdc .cursorrules
+
+# 方式 2：在 Cursor 中引用
+# 将规则文件内容粘贴到 Settings > Rules 中
+```
+
+### 与 quality-rhythm-sdd Preset 的关系
+
+- **quality-rhythm-sdd Preset**：定义"做什么"（Spec + UI 字段 + 交互 + TDD）
+- **awesome-cursorrules**：定义"怎么写"（编码规范 + 最佳实践）
+- 两者互补：Preset 管需求质量，cursorrules 管代码质量
 
 ## 第六章：特殊场景映射表（完整版）
 

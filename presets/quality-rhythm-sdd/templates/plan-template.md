@@ -20,6 +20,7 @@
 **Project Type**: [e.g., web-service, fullstack-app, mobile-app]
 **Performance Goals**: [e.g., <200ms p95, <800MB peak memory]
 **Constraints**: [e.g., 4G ECS, single-node deployment]
+**Coding Rules**: [awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules) 框架规则 + [toss-style-design-system](https://github.com/PatrickJS/awesome-cursorrules/blob/main/rules/toss-style-design-system.mdc)（UI项目）
 **Scale/Scope**: [e.g., 10k DAU, 20 pages, 5 API endpoints]
 
 ## Constitution Check

@@ -242,10 +242,54 @@
  新功能必须指定使用哪些现有组件。
 -->
 
+### Default Design Principles (from toss-style)
+
+> 新功能设计默认参考 [toss-style-design-system](https://github.com/PatrickJS/awesome-cursorrules/blob/main/rules/toss-style-design-system.mdc) 的设计原则。
+> 如有自定义设计系统，以项目自身为准，但以下原则作为基础约束。
+
+**排版层级（Typography Hierarchy）**
+- 标题层级清晰：H1 > H2 > H3，字号递减，粗细递减
+- 正文行高 1.5-1.6，标题行高 1.2-1.3
+- 中文优先使用系统默认字体（PingFang SC / Microsoft YaHei）
+
+**颜色克制（Color Restraint）**
+- 主色不超过 3 个，辅助色不超过 2 个
+- 背景色与前景色对比度 >= 4.5:1（WCAG AA）
+- 错误色用 red，成功色用 green，警告色用 amber/yellow
+
+**间距节奏（Spacing Rhythm）**
+- 基础间距单位 4px 或 8px
+- 组件内间距 8-16px，组件间间距 16-24px，区块间距 32-48px
+- 保持垂直节奏一致性
+
+**卡片与表面（Cards & Surfaces）**
+- 卡片圆角统一（8px / 12px / 16px 三选一）
+- 卡片阴影层级：resting < hover < active
+- 表面层级：background < surface < overlay
+
+**暗色模式（Dark Mode）**
+- 背景色从白变深灰（#121212 / #1a1a1a）
+- 文字色从黑变浅灰（#e0e0e0）
+- 强调色保持一致但降低饱和度
+
+**无障碍（Accessibility）**
+- 所有交互元素必须可键盘操作
+- 图片必须有 alt 属性
+- 表单必须有关联 label
+- 焦点指示器清晰可见
+
+**常见错误（反模式）**
+- ❌ 使用超过 5 种颜色
+- ❌ 字号层级超过 4 级
+- ❌ 间距不一致（如 7px、13px 等非标准值）
+- ❌ 忽略暗色模式适配
+- ❌ 按钮/链接没有 hover 和 active 状态
+
 ### Design System Reference
 
 - **Component Library**: [如 Ant Design 5.x / Element Plus / shadcn/ui / Tailwind]
 - **Design Tokens**: [token 文件链接]
+- **Design Principles**: [toss-style-design-system](https://github.com/PatrickJS/awesome-cursorrules/blob/main/rules/toss-style-design-system.mdc) -- 默认参考
 - **Figma/Sketch**: [设计稿链接]
 
 ### Color Specification
