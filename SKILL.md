@@ -685,7 +685,7 @@ Phase 3 门禁  → /qa 中 [必] 视觉回归测试
 uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@vX.Y.Z
 
 # 在项目中安装 quality-rhythm-sdd Preset
-specify preset add --dev /path/to/quality-rhythm-sdd
+specify preset add --dev <path-to-quality-rhythm-repo>/presets/quality-rhythm-sdd
 ```
 
 ### 触发方式

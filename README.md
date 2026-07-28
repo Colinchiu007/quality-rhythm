@@ -73,6 +73,18 @@
     └── ...
 ```
 
+## Spec Kit Preset
+
+`presets/quality-rhythm-sdd/` 包含增强版 Spec Kit 模板，注入 UI 字段规格、
+交互控件、弹窗、视觉规范、错误状态、字段校验、TDD 测试映射等 7 层执行层规格。
+详见 SKILL.md 第 5.4 节。
+
+安装：
+
+```bash
+specify preset add --dev <path-to-quality-rhythm-repo>/presets/quality-rhythm-sdd
+```
+
 ## 核心工作流
 
 质量节拍将完整开发流程划分为 5 大 Phase、13 子阶段：
@@ -103,7 +115,7 @@ Phase 5: 运营期 — 排查、性能、可观测、安全
 详见 SKILL.md 第 5.4 节。安装方式：
 
 ```bash
-specify preset add --dev /path/to/quality-rhythm-sdd
+specify preset add --dev <path-to-quality-rhythm-repo>/presets/quality-rhythm-sdd
 ```
 
 ## 质量门禁
