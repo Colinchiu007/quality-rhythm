@@ -73,6 +73,15 @@
     └── ...
 ```
 
+## Canonical 安装位置
+
+本仓库的主技能文件是 `SKILL.md`。在同时使用 Codex 与其他 Agent 工具时，建议只把本仓库映射到：
+
+```text
+C:\Users\邱领\.agents\skills\质量节拍\SKILL.md
+```
+
+不要再在 `C:\Users\邱领\.codex\skills\quality-rhythm\` 保留第二份活动副本，否则 Skill 列表会出现重复的 `Quality Rhythm`。
 ## 核心工作流
 
 质量节拍将完整开发流程划分为 5 大 Phase、13 子阶段：
