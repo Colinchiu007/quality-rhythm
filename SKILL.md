@@ -87,6 +87,7 @@ type: workflow
 │  ├── 0.1 市场调研 ──→ /office-hours, /interview-me, idea-refine            │
 │  ├── 0.2 创意构想 ──→ /pm, /plan-ceo-review, design-consultation           │
 │  ├── 0.3 需求确认 ──→ /pm (PRD), /office-hours Phase 2.8, spec-driven-dev    │
+│  │   └─ 增强选项  ──→ quality-rhythm-sdd Preset (Spec Kit 集成)             │
 │  └── 0→1 方案输出 ──→ /create-plan, Feature List (功能点拆解+优先级)     │
 │                                                                         │
 │  Phase 1: 规划期 (Plan)                                                 │
@@ -133,7 +134,8 @@ type: workflow
 | **gstack 核心 (33)** | /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /plan-devex-review, /plan-tune, /autoplan, /review, /investigate, /retro, /learn, /ai-collaboration, /ship, /land-and-deploy, /canary, /cso, /guard, /freeze, /unfreeze, /qa, /qa-only, /design-review, /design-consultation, /design-html, /design-shotgun, /document-release, /health, /benchmark, /browse, /pair-agent, /codex, /careful, /pm, /define-goal, /create-plan, /interview-me, /auto-exec |
 | **Superpowers (11)** | subagent-driven-development, executing-plans, writing-plans, requesting-code-review, receiving-code-review, dispatching-parallel-agents, finishing-a-development-branch, systematic-debugging, root-cause-tracing, verification-before-completion, test-driven-development, testing-anti-patterns, condition-based-waiting, remembering-conversations, using-git-worktrees, brainstorming, defense-in-depth |
 | **Addy-Agent (15)** | planning-and-task-breakdown, spec-driven-development, incremental-implementation, code-review-and-quality, idea-refine, shipping-and-launch, ci-cd-and-automation, documentation-and-adrs, source-driven-development, doubt-driven-development, code-simplification, context-engineering, api-and-interface-design, frontend-ui-engineering, performance-optimization, observability-and-instrumentation, security-and-hardening, git-workflow-and-versioning, deprecation-and-migration, interview-me |
-| **总计** | **57 个技能** |
+| **Spec Kit 集成 (1 Preset)** | quality-rhythm-sdd: Spec Kit Preset，增强 spec-template / plan-template / clarify / checklist |
+| **总计** | **57 个技能 + 1 Spec Kit Preset + awesome-cursorrules 引用** |
 
 ---
 
@@ -152,6 +154,7 @@ Phase 0.0 (目标) → /define-goal
 Phase 0.1 (调研) → /office-hours → /interview-me → idea-refine
 Phase 0.2 (构想) → /pm → /plan-ceo-review → design-consultation
 Phase 0.3 (需求) → /pm (PRD) → /office-hours Phase 2.8 → spec-driven-dev
+                      └─ [增强] quality-rhythm-sdd Preset (Spec Kit: specify→clarify→checklist→plan→tasks)
 Phase 0→1 (方案) → /create-plan
 Phase 0→1 (功能) → Feature List (功能点列表)
 Phase 1→2 (测试) → Test Plan (测试计划)
@@ -621,7 +624,7 @@ Phase 3 门禁  → /qa 中 [必] 视觉回归测试
 | Skill | 文章对应 | 在全流程中的位置 | 集成方式 |
 |-------|---------|-----------------|---------|
 | **planning-and-task-breakdown** | "拆解功能" | Phase 1.3 | 验收标准+可独立测试 |
-| **spec-driven-development** | "理解需求→设计方案" | Phase 0.3→1.1 | 先写规范再编码 |
+| **spec-driven-development** | "理解需求→设计方案" | Phase 0.3→1.1 | 先写规范再编码；可通过 quality-rhythm-sdd Preset 增强 UI/交互/TDD 规格；编码阶段可通过 awesome-cursorrules 规则文件约束 |
 | **incremental-implementation** | "小步开发" | Phase 2→③ | 薄垂直切片+边界检查 |
 | **code-review-and-quality** | "代码审查" | Phase 2→④ | 五轴审查 |
 | **idea-refine** | "需求拆解" | Phase 0.1 | 发散收敛+压力测试 |
@@ -642,6 +645,106 @@ Phase 3 门禁  → /qa 中 [必] 视觉回归测试
 
 ---
 
+## 第 5.4 节：Spec Kit 集成（quality-rhythm-sdd Preset）
+
+质量节拍通过 **quality-rhythm-sdd Preset** 与 GitHub Spec Kit 集成，提供 Spec-Driven Development 增强工作流。
+
+### 什么是 Spec Kit
+
+[GitHub Spec Kit](https://github.com/github/spec-kit) 是 GitHub 官方开源的 Spec-Driven Development (SDD) 工具包。
+核心理念：**规格（Spec）是源头真相，代码是规格的表达**。通过 `/speckit.specify -> /speckit.clarify -> /speckit.checklist -> /speckit.plan -> /speckit.tasks -> /speckit.implement` 的结构化工作流，确保从需求到实现的每一步都有质量门禁。
+
+### quality-rhythm-sdd Preset 增强内容
+
+在 Spec Kit 核心模板之上，注入 7 层执行层规格：
+
+| 增强章节 | 覆盖内容 |
+|---------|----------|
+| **UI 字段规格** | 每个表单的每个字段：类型、校验规则、错误提示、必填、显示条件 |
+| **交互控件规格** | 每个按钮/下拉/开关：触发条件、行为、状态变化、禁用条件 |
+| **弹窗/Toast 规格** | 每个弹窗：触发、内容、按钮、关闭方式、遮罩行为、动画 |
+| **视觉规范** | 组件库、颜色、字体、间距、响应式断点、WCAG 无障碍 |
+| **错误/空/加载状态** | 每个页面的三种状态：错误展示+恢复、空态 CTA、加载指示器 |
+| **字段校验规则** | 前端实时 + 后端保存 + 跨字段 + 异步校验 |
+| **TDD 测试映射** | 每个验收标准 -> Gherkin 测试场景 -> 测试类型（E2E/集成/单元） |
+
+### 与质量节拍的映射
+
+| 质量节拍 Phase | Spec Kit 命令 | 产出物 |
+|--------------|--------------|--------|
+| Phase 0 探索期 | `/speckit.specify` + `/speckit.clarify` | spec.md（含 UI/交互/弹窗/视觉/TDD 章节） |
+| Phase 0->1 | `/speckit.checklist` | 质量清单（UI 完整性 + TDD 覆盖率） |
+| Phase 1 规划期 | `/speckit.plan` + `/speckit.tasks` | plan.md + tasks.md（TDD 优先任务排序） |
+| Phase 2 开发期 | `/speckit.implement` | 代码 + 测试（先写测试再写实现） |
+
+### 安装方式
+
+```bash
+# 安装 Spec Kit CLI
+uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@vX.Y.Z
+
+# 在项目中安装 quality-rhythm-sdd Preset
+specify preset add --dev <path-to-quality-rhythm-repo>/presets/quality-rhythm-sdd
+```
+
+### 触发方式
+
+当用户说以下任意一句话时，自动路由到 Spec Kit 增强工作流：
+
+- "写个 Spec" / "写规格"
+- "用 Spec Kit 做" / "Spec 驱动开发"
+- "按 SDD 流程来"
+- "TDD + Spec"
+- "写个完整的 PRD"
+
+---
+
+
+## 第 5.5 节：awesome-cursorrules 编码规范集成
+
+质量节拍的 **Phase 0（探索期）** 和 **Phase 1（规划期）** 关注需求和架构，
+**Phase 2（开发期）** 关注编码质量。[awesome-cursorrules](https://github.com/PatrickJS/awesome-cursorrules)
+提供 170+ 个框架特定的 `.cursorrules` / `.mdc` 规则文件，可用于 Phase 2 的编码约束。
+
+### 与质量节拍的阶段映射
+
+| 质量节拍阶段 | awesome-cursorrules 对应 | 用途 |
+|-------------|------------------------|------|
+| Phase 0 探索期 | — | 不涉及编码 |
+| Phase 1 规划期 | — | 不涉及编码 |
+| Phase 2 开发期 | 框架规则文件 | 编码约束、最佳实践、反模式规避 |
+| Phase 3 交付期 | — | 不涉及编码 |
+| Phase 4 复盘期 | — | 不涉及编码 |
+
+### 推荐规则文件（按项目类型）
+
+| 项目类型 | 推荐规则文件 | 说明 |
+|---------|------------|------|
+| React/Next.js | `react-nextjs.mdc` | React + Next.js 最佳实践 |
+| Vue/Nuxt | `vue-nuxt.mdc` | Vue 3 + Nuxt 3 规范 |
+| Python/FastAPI | `python-fastapi.mdc` | FastAPI 后端规范 |
+| Python/Django | `python-django.mdc` | Django 后端规范 |
+| TypeScript | `typescript.mdc` | TypeScript 通用规范 |
+| CSS/Tailwind | `tailwind-css.mdc` | Tailwind CSS 规范 |
+| 测试 | `testing.mdc` | 测试最佳实践 |
+| 安全 | `security.mdc` | 安全编码规范 |
+
+### 安装方式
+
+```bash
+# 方式 1：直接复制规则文件到项目根目录
+cp rules/<framework>.mdc .cursorrules
+
+# 方式 2：在 Cursor 中引用
+# 将规则文件内容粘贴到 Settings > Rules 中
+```
+
+### 与 quality-rhythm-sdd Preset 的关系
+
+- **quality-rhythm-sdd Preset**：定义"做什么"（Spec + UI 字段 + 交互 + TDD）
+- **awesome-cursorrules**：定义"怎么写"（编码规范 + 最佳实践）
+- 两者互补：Preset 管需求质量，cursorrules 管代码质量
+
 ## 第六章：特殊场景映射表（完整版）
 
 当你说以下任意一句话时，AI 自动路由到对应的技能组合：
@@ -651,6 +754,8 @@ Phase 3 门禁  → /qa 中 [必] 视觉回归测试
 ────────────────────────────────────────────────────────────────
 "我有一个想法"                          /office-hours → /plan-ceo-review
 "帮我分析一下这个需求"                   /office-hours Phase 2.8 → spec-driven-dev
+"写个 Spec"                               quality-rhythm-sdd → /speckit.specify → /speckit.clarify
+"用 Spec Kit 做"                          quality-rhythm-sdd → /speckit.specify → /speckit.clarify → /speckit.checklist
 "出个技术方案"                           /plan-eng-review → api-and-interface-design
 "审查一下架构"                           /plan-eng-review (双模型审查)
 "这个设计怎么样"                         /plan-design-review

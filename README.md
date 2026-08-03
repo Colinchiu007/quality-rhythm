@@ -73,6 +73,18 @@
     └── ...
 ```
 
+## Spec Kit Preset
+
+`presets/quality-rhythm-sdd/` 包含增强版 Spec Kit 模板，注入 UI 字段规格、
+交互控件、弹窗、视觉规范、错误状态、字段校验、TDD 测试映射等 7 层执行层规格。
+详见 SKILL.md 第 5.4 节。
+
+安装：
+
+```bash
+specify preset add --dev <path-to-quality-rhythm-repo>/presets/quality-rhythm-sdd
+```
+
 ## Canonical 安装位置
 
 本仓库的主技能文件是 `SKILL.md`。在同时使用 Codex 与其他 Agent 工具时，建议只把本仓库映射到：
@@ -102,6 +114,18 @@ Phase 5: 运营期 — 排查、性能、可观测、安全
 
 质量节拍集成了 gstack 核心技能、Superpowers Skills 和 Addy-Agent Skills，
 覆盖从需求到运营的完整开发流程。详见 SKILL.md 第五章。
+
+### Spec Kit 集成（quality-rhythm-sdd Preset）
+
+质量节拍通过 Spec Kit Preset 增强了 Spec-Driven Development 工作流，
+在标准 Spec 流程之上注入 UI 字段规格、交互控件、弹窗、视觉规范、错误状态、
+字段校验、TDD 测试映射等 7 层执行层规格。
+
+详见 SKILL.md 第 5.4 节。安装方式：
+
+```bash
+specify preset add --dev <path-to-quality-rhythm-repo>/presets/quality-rhythm-sdd
+```
 
 ## 质量门禁
 
