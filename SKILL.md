@@ -472,6 +472,24 @@ Phase 3 门禁  → /qa 中 [必] 视觉回归测试
     └── 输出：协作质量评分 + Bug 回溯状态
     │
     ▼
+⑦ CI 流水线验证（铁律：本地通过 ≠ 交付通过）
+    ├── git push 后立即执行：
+    │   ├── gh run list --limit 1 确认 CI 已触发（status=in_progress）
+    │   └── gh run watch <run-id> --exit-status 等待结果
+    ├── CI 通过 → ✅ 可进入下一个子任务
+    ├── CI 失败 → ❌ 必须修复后重新 push，不得跳过
+    │   ├── 检查失败阶段：install → lint → test → build
+    │   ├── install 失败 → 检查 package-lock.json 是否同步（npm install 重新生成）
+    │   ├── lint 失败 → 修复 ESLint 错误（未使用变量加 _ 前缀等）
+    │   ├── test 失败 → 修复测试（本地必须复现）
+    │   └── build 失败 → 修复 TypeScript 编译错误
+    ├── ⚠️ 常见陷阱：
+    │   ├── Windows 本地 npm install（宽松）≠ CI npm ci（严格模式）
+    │   ├── --no-verify 跳过 hook 不能跳过 CI
+    │   └── 本地测试通过不代表 CI 环境也通过
+    └── 输出：CI 状态确认（通过/失败+修复记录）
+    │
+    ▼
 回到 ①，进入下一个子任务
 ```
 
@@ -1475,6 +1493,7 @@ Phase 2 门禁：
   [ ] 代码审查无 CRITICAL 问题
   [ ] 测试覆盖 >= 3 场景/模块
   [ ] API Key 无硬编码（/cso）
+  [ ] CI 流水线通过（push 后 gh run list 确认 success）
 
 Phase 3 门禁：
   [ ] /review 全量审查通过
@@ -1668,6 +1687,7 @@ Phase 2 门禁（增强）：
   [ ] 代码审查无 CRITICAL 问题
   [ ] 测试覆盖 >= 3 场景/模块
   [ ] API Key 无硬编码（/cso）
+  [ ] CI 流水线通过（push 后 gh run list 确认 success）
 ```
 
 **触发时机：** 每个 Sub-Task 完成时自动评估 Completeness 评分，低于阈值不可进入下一 Phase。
