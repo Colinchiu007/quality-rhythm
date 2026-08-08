@@ -69,9 +69,16 @@ function check() {
   if (hasCmd('codegraph')) record('PASS', 'codegraph CLI', '已安装');
   else record('FAIL', 'codegraph CLI', '未安装（bootstrap-env.js 步骤 2）');
 
-  // 5. codegraph 项目索引
-  if (fs.existsSync(path.join(TARGET, '.codegraph'))) record('PASS', 'codegraph 索引', '.codegraph 存在');
-  else record('FAIL', 'codegraph 索引', '未建（install-mechanism.js 步骤 3 应已 codegraph init）');
+  // 5. codegraph 项目索引（深度：status 解析）
+  const cgStatus = tryCmd('codegraph status 2>&1', TARGET);
+  if (cgStatus.ok && /up to date|indexed/i.test(cgStatus.out)) {
+    const m = cgStatus.out.match(/up to date|indexed \d+ files/i);
+    record('PASS', 'codegraph 索引', 'status: ' + (m ? m[0] : 'ok'));
+  } else if (fs.existsSync(path.join(TARGET, '.codegraph'))) {
+    record('WARN', 'codegraph 索引', '.codegraph 存在但 status 未确认（重跑 codegraph init/status）');
+  } else {
+    record('FAIL', 'codegraph 索引', '未建（install-mechanism.js 步骤 3 应已 codegraph init）');
+  }
 
   // 6. fastctx
   if (hasCmd('fastctx')) {

@@ -115,7 +115,30 @@ async function main() {
   copy(path.join(QR_SKILL_ROOT, 'installer', 'husky', 'install.js'), path.join(TARGET, '.husky', 'install.js'));
   copy(path.join(QR_SKILL_ROOT, 'installer', 'github', 'quality-gate.yml'), path.join(TARGET, '.github', 'workflows', 'quality-gate.yml'));
   copy(path.join(QR_SKILL_ROOT, 'installer', 'github', 'branch-protection.json'), path.join(TARGET, '.github', 'branch-protection.json'));
-  console.log('  （husky 钩子注册: 在项目执行 node .husky/install.js；CI 由 .github/workflows/quality-gate.yml 生效）');
+
+  // husky 钩子自动注册（install.js 非交互；需 .git 存在）
+  if (fs.existsSync(path.join(TARGET, '.git'))) {
+    const huskyInstall = path.join(TARGET, '.husky', 'install.js');
+    if (fs.existsSync(huskyInstall)) {
+      console.log('  husky 钩子注册: node .husky/install.js --force ...');
+      try { execSync('node .husky/install.js --force', { cwd: TARGET, stdio: 'pipe' }); console.log('  ✅ husky pre-commit 已注册'); }
+      catch (e) { console.warn('  ⚠️ husky 注册失败（先 git init 后重跑）'); }
+    }
+  } else {
+    console.log('  ⚠️ 目标无 .git，跳过 husky 注册（git init 后执行 node .husky/install.js）');
+  }
+
+  // quality-gate.yml 依赖检查：CI 需要 npm test
+  const pkg = path.join(TARGET, 'package.json');
+  if (fs.existsSync(pkg)) {
+    try {
+      const scripts = JSON.parse(fs.readFileSync(pkg, 'utf8')).scripts || {};
+      if (!scripts.test) console.warn('  ⚠️ package.json 无 test script——CI quality-gate.yml 的 Gate 1 (npm test) 会失败，请补充');
+      else console.log(`  ✅ npm test 脚本存在（${scripts.test}）`);
+    } catch (_) { console.warn('  ⚠️ package.json 解析失败，跳过 test 检查'); }
+  } else {
+    console.warn('  ⚠️ 无 package.json——CI quality-gate.yml 依赖 npm test，请在项目初始化后补充');
+  }
 
   // ── 5. CCG 官方安装提示（交互式，不自动）──
   console.log('\n[5/6] CCG 机制...');

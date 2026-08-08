@@ -63,7 +63,7 @@ git clone https://github.com/Colinchiu007/quality-rhythm.git   # → ~/.agents/s
 
 **项目门禁**（install-mechanism.js 已自动复制产物，无需交互 installer）：
 - `.quality-rhythm` 标记 + `.husky/pre-commit.js` + `.github/workflows/quality-gate.yml` + `branch-protection.json`
-- husky 钩子注册：`node .husky/install.js`（一次）
+- husky 钩子已由 install-mechanism.js 自动注册（`node .husky/install.js --force`）
 
 ### 6. 重启 Codex + 验证
 

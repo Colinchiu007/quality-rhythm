@@ -53,6 +53,12 @@ code is a normal result. The last line of every result says `Complete` or
 
 ## 区块 3：子代理使用（编排）
 
+## 区块 4：机制硬化规则（2026-08-08，与 openspec-integration 契约同步）
+
+- **远程同步**：任务标记 completed 前必须核对关联 PR 已合并或记录 remoteStatus，禁止基于滞后状态做重复工作。
+- **子代理降级**：派发探子前探测子代理可用性；出现 403/超时等后端不可用错误时立即降级为主代理直接执行，不盲等。
+- **OpenSpec 引导**：OpenSpec 已启用——M+/中高风险任务须经 `/opsx:propose` 建 change，机制契约见 `openspec/specs/openspec-integration/spec.md`。
+
 ## 子代理使用
 
 子代理在我们的工作里用于探索，他是你的探子。
