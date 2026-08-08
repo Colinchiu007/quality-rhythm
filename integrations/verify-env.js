@@ -110,7 +110,13 @@ function check() {
   authChecks.push(hasCmd('claude') ? 'claude ✅' : 'claude ❌');
   authChecks.push(hasCmd('gemini') ? 'gemini ✅' : 'gemini ❌');
   authChecks.push(hasCmd('antigravity') ? 'antigravity ✅' : 'antigravity ❌');
-  record('WARN', 'CCG 双模型认证', authChecks.join(' | ') + '（缺失项需手工登录/装 CLI）');
+  record('WARN', 'CCG 双模型认证', authChecks.join(' | '));
+  // 配置指引（帮助用户补认证）
+  if (!wrapperExists) console.log('      → codeagent-wrapper: 运行 npx ccg-workflow 生成');
+  if (!hasCmd('claude')) console.log('      → Claude Code: npm i -g @anthropic-ai/claude-code 后 claude login');
+  if (!hasCmd('gemini')) console.log('      → Gemini CLI: 官方安装后登录（认证后 gemini 可用）');
+  if (!hasCmd('antigravity')) console.log('      → antigravity CLI: 官方安装后登录');
+  console.log('      （认证缺失时 CCG 退化为单模型 + 子代理，机制文本仍生效）');
 
   // 汇总
   const fails = results.filter((r) => r.level === 'FAIL');

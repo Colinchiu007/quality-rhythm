@@ -156,6 +156,13 @@ integrations/
     └── quality-gates.template.md
 ```
 
+## 跨平台说明
+
+- 脚本以 **Windows** 为主测试（Node 20+ / PowerShell / cmd）
+- `bootstrap-env.js` 会按平台生成 config.toml 的 context7 段：Windows 用 `cmd /c npx`，**macOS/Linux 用 `npx` 直连**，并输出平台提示；若 npx 不在 PATH 请手动调整
+- `verify-env.js` 的 codeagent-wrapper 检测覆盖 Windows（`~/.claude/bin/*.exe`）与类 Unix（`/usr/local/bin/codeagent-wrapper`）
+- 已知限制：macOS/Linux 未经完整端到端验证；如遇问题按 env-checklist 逐项核对
+
 ## 诚实边界（不会自动复制）
 
 - API Key / 登录态（Claude、antigravity/Gemini、Stitch、CloudBase）

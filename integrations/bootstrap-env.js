@@ -26,6 +26,7 @@ const { execSync } = require('child_process');
 
 const DRY = process.argv.includes('--dry-run');
 const YES = process.argv.includes('--yes');
+const IS_WIN = process.platform === 'win32';
 const HOME = os.homedir();
 const CODEX_AGENTS = path.join(HOME, '.codex', 'AGENTS.md');
 const CODEX_CONFIG = path.join(HOME, '.codex', 'config.toml');
@@ -87,11 +88,15 @@ ${DRY ? '模式: --dry-run（只打印计划，不执行）' : '模式: 执行'}
   if (fs.existsSync(CODEX_AGENTS) && fs.readFileSync(CODEX_AGENTS, 'utf8').includes('CCG Multi-Model Orchestration')) {
     log('  ~/.codex/AGENTS.md 已含 CCG 块，跳过');
   } else {
-    const out = run('npx -y ccg-workflow init --skip-prompt', { cwd: HOME });
-    if (/error|failed|not found/i.test(out) && !out.includes('Setup Complete')) {
-      log('  非交互安装未成功（可能需要交互配置）。请手工执行: npx ccg-workflow（菜单选 Codex Mode）');
+    run('npx -y ccg-workflow init --skip-prompt', { cwd: HOME });
+    // 二次检测：--skip-prompt 在干净环境会"保留现有设置"而可能不生成 CCG 块，不能假成功
+    const hasCcgBlock = fs.existsSync(CODEX_AGENTS) && fs.readFileSync(CODEX_AGENTS, 'utf8').includes('CCG Multi-Model Orchestration');
+    if (hasCcgBlock) {
+      log('  ✅ CCG 块已生成（~/.codex/AGENTS.md）');
     } else {
-      log('  npx ccg-workflow init --skip-prompt 完成（若命令不可用，手工执行 npx ccg-workflow）');
+      log('  ❌ 自动安装未生成 CCG 块（--skip-prompt 保留现有设置；干净环境需交互选择 Codex Mode）。');
+      log('     请手工执行: npx ccg-workflow → 菜单选 "X. Codex Mode"');
+      log('     （组件已尝试安装：codeagent-wrapper / .claude 配置等）');
     }
   }
 
@@ -116,9 +121,13 @@ ${DRY ? '模式: --dry-run（只打印计划，不执行）' : '模式: 执行'}
   log('\n[5/7] ~/.codex/config.toml...');
   const fastCtxBin = detectFastCtxBin();
   const nodeRepl = detectNodeRepl();
+  // context7 段按平台生成：Windows 用 cmd /c（npx 是 .cmd）；其他平台用 npx 直连
+  const context7Body = IS_WIN
+    ? `type = "stdio"\ncommand = "cmd"\nargs = [ "/c", "npx", "-y", "@upstash/context7-mcp@latest" ]`
+    : `type = "stdio"\ncommand = "npx"\nargs = [ "-y", "@upstash/context7-mcp@latest" ]`;
   const mcpBlocks = [
     [`[mcp_servers.codegraph]`, `command = "codegraph"\nargs = [ "serve", "--mcp" ]\n\n[mcp_servers.codegraph.tools.codegraph_node]\napproval_mode = "approve"`],
-    [`[mcp_servers.context7]`, `type = "stdio"\ncommand = "cmd"\nargs = [ "/c", "npx", "-y", "@upstash/context7-mcp@latest" ]`],
+    [`[mcp_servers.context7]`, context7Body],
     [`[mcp_servers.fastctx]`, `command = "${fastCtxBin}"\nargs = ["serve", "--enable-shell"]\nstartup_timeout_sec = 120\n\n[mcp_servers.fastctx.env]\nFASTCTX_TOKEN_BUDGET = "8500"\nFASTCTX_GLOB_TOKEN_BUDGET = "4300"`],
     [`[mcp_servers.node_repl]`, `args = []\ncommand = '${nodeRepl}'\nstartup_timeout_sec = 120`],
   ];
@@ -143,6 +152,10 @@ ${DRY ? '模式: --dry-run（只打印计划，不执行）' : '模式: 执行'}
     log(`  追加 ${appendLines.length} 个缺失 MCP 段${DRY ? '（dry-run 未写入）' : ''}`);
   } else {
     log('  所有 MCP 段已存在，无改动');
+  }
+  if (!IS_WIN) {
+    log('  ⚠️ 非 Windows 平台：context7 段已使用 npx 直连（Windows 用 cmd /c）。');
+    log('     若 npx 不在 PATH 或启动异常，请手动调整 ~/.codex/config.toml 的 [mcp_servers.context7] 段。');
   }
 
   // ── 6. 质量节拍 skill ──
