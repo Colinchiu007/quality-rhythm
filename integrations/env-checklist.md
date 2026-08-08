@@ -47,10 +47,9 @@ node integrations/install-mechanism.js <项目> --yes
 
 ## 4. 质量节拍 skill
 
-- [ ] **复制 skill 目录**（必要！installer 不装 skill 本身）：
-      `git clone https://github.com/Colinchiu007/quality-rhythm.git` → 复制到 `~/.agents/skills/质量节拍/`
-      或直接复制本目录
-- [ ] 项目门禁：`npx github:Colinchiu007/quality-rhythm/installer`（装 .quality-rhythm 标记 + pre-commit + CI）
+- [ ] **skill 目录**：bootstrap-env.js 已自动 clone（`~/.agents/skills/质量节拍/`）；缺失时手工 `git clone https://github.com/Colinchiu007/quality-rhythm.git`
+- [ ] **项目门禁产物**：install-mechanism.js 已自动复制（`.quality-rhythm` 标记 + `.husky/pre-commit.js` + `.github/workflows/quality-gate.yml` + `branch-protection.json`）
+- [ ] husky 钩子注册：项目内执行 `node .husky/install.js`（一次）
 - [ ] `~/.codex/config.toml` 或项目 AGENTS.md 能路由到质量节拍 skill
 
 ## 5. 项目模板

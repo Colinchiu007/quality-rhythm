@@ -56,15 +56,14 @@ node integrations/install-mechanism.js <项目> --yes
 #   5. 验证（openspec doctor + 检查脚本）
 ```
 
-**质量节拍 skill 本体**（installer 不装 skill；bootstrap-env.js 已自动 clone）：
+**质量节拍 skill 本体**（bootstrap-env.js 已自动 clone）：
 ```bash
 git clone https://github.com/Colinchiu007/quality-rhythm.git   # → ~/.agents/skills/质量节拍/
 ```
 
-**项目门禁**（可选，交互式）：
-```bash
-npx github:Colinchiu007/quality-rhythm/installer   # pre-commit / CI / 标记
-```
+**项目门禁**（install-mechanism.js 已自动复制产物，无需交互 installer）：
+- `.quality-rhythm` 标记 + `.husky/pre-commit.js` + `.github/workflows/quality-gate.yml` + `branch-protection.json`
+- husky 钩子注册：`node .husky/install.js`（一次）
 
 ### 6. 重启 Codex + 验证
 

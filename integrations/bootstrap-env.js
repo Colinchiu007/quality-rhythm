@@ -5,13 +5,14 @@
  * 用法（新电脑执行一次）：
  *   node bootstrap-env.js [--dry-run] [--yes]
  *
- * 自动化范围：
- *   1. fastctx：npm i -g fastctx + fastctx apply --yes + status
- *   2. codegraph：npm i -g @colbymchenry/codegraph（已装跳过）
- *   3. OpenSpec CLI：npm i -g @fission-ai/openspec（已装跳过）
- *   4. ~/.codex/config.toml：备份后只追加缺失的 [mcp_servers.*] 段（自动检测路径，不覆盖已有配置）
- *   5. 质量节拍 skill：git clone Colinchiu007/quality-rhythm → ~/.agents/skills/质量节拍（可选，--yes 时）
- *   6. CCG overlay：幂等追加 ccg/codex-overlay.md 区块到 ~/.codex/AGENTS.md（已含标记则跳过）
+ * 自动化范围（7 步）：
+ *   1. CCG 官方安装：npx ccg-workflow init --skip-prompt（非交互；失败则提示交互式）
+ *   2. fastctx：npm i -g fastctx + fastctx apply --yes + status
+ *   3. codegraph：npm i -g @colbymchenry/codegraph（已装跳过）
+ *   4. OpenSpec CLI：npm i -g @fission-ai/openspec（已装跳过）
+ *   5. ~/.codex/config.toml：备份后只追加缺失的 [mcp_servers.*] 段（自动检测路径，不覆盖已有配置）
+ *   6. 质量节拍 skill：git clone Colinchiu007/quality-rhythm → ~/.agents/skills/质量节拍（可选，--yes 时）
+ *   7. CCG overlay：幂等追加 ccg/codex-overlay.md 区块到 ~/.codex/AGENTS.md（已含标记则跳过）
  *
  * 仍需手工（脚本只提示）：Claude/antigravity/Gemini 认证与 API Key、Codex 完全重启。
  * 安全：不读取/写入任何密钥；config.toml 修改前自动备份；--dry-run 只打印计划。
@@ -36,11 +37,11 @@ const OVERLAY_MARKER = 'CCG-FAST-CONTEXT'; // overlay 唯一标记（幂等检�
 function log(msg) { console.log(msg); }
 function run(cmd, opts = {}) {
   if (DRY) { log(`  [dry-run] 将执行: ${cmd}`); return ''; }
-  try { return execSync(cmd, { stdio: 'pipe', encoding: 'utf8', ...opts }); }
+  try { return execSync(cmd, { stdio: 'pipe', encoding: 'utf8', timeout: 300000, ...opts }); }
   catch (e) { return String(e.stdout || '') + String(e.stderr || ''); }
 }
 function has(cmd) {
-  try { execSync(`${cmd} --version`, { stdio: 'pipe', encoding: 'utf8' }); return true; } catch { return false; }
+  try { execSync(`${cmd} --version`, { stdio: 'pipe', encoding: 'utf8', timeout: 15000 }); return true; } catch { return false; }
 }
 function detectFastCtxBin() {
   const candidates = [
@@ -81,25 +82,38 @@ async function main() {
 ${DRY ? '模式: --dry-run（只打印计划，不执行）' : '模式: 执行'}
 `);
 
-  // ── 1. fastctx ──
-  log('\n[1/6] fastctx...');
+  // ── 1. CCG 官方安装（非交互优先）──
+  log('\n[1/7] CCG 官方安装（ccg-workflow）...');
+  if (fs.existsSync(CODEX_AGENTS) && fs.readFileSync(CODEX_AGENTS, 'utf8').includes('CCG Multi-Model Orchestration')) {
+    log('  ~/.codex/AGENTS.md 已含 CCG 块，跳过');
+  } else {
+    const out = run('npx -y ccg-workflow init --skip-prompt', { cwd: HOME });
+    if (/error|failed|not found/i.test(out) && !out.includes('Setup Complete')) {
+      log('  非交互安装未成功（可能需要交互配置）。请手工执行: npx ccg-workflow（菜单选 Codex Mode）');
+    } else {
+      log('  npx ccg-workflow init --skip-prompt 完成（若命令不可用，手工执行 npx ccg-workflow）');
+    }
+  }
+
+  // ── 2. fastctx ──
+  log('\n[2/7] fastctx...');
   if (has('fastctx')) { log('  已安装，跳过 npm install'); }
   else { run('npm i -g fastctx'); log('  npm i -g fastctx 完成'); }
   run('fastctx apply --yes');
   run('fastctx status');
 
-  // ── 2. codegraph ──
-  log('\n[2/6] codegraph...');
+  // ── 3. codegraph ──
+  log('\n[3/7] codegraph...');
   if (has('codegraph')) { log('  已安装，跳过'); }
   else { run('npm i -g @colbymchenry/codegraph'); log('  npm i -g @colbymchenry/codegraph 完成'); }
 
-  // ── 3. OpenSpec CLI ──
-  log('\n[3/6] OpenSpec CLI...');
+  // ── 4. OpenSpec CLI ──
+  log('\n[4/7] OpenSpec CLI...');
   if (has('openspec')) { log('  已安装，跳过'); }
   else { run('npm i -g @fission-ai/openspec'); log('  npm i -g @fission-ai/openspec 完成'); }
 
-  // ── 4. config.toml 合并 ──
-  log('\n[4/6] ~/.codex/config.toml...');
+  // ── 5. config.toml 合并 ──
+  log('\n[5/7] ~/.codex/config.toml...');
   const fastCtxBin = detectFastCtxBin();
   const nodeRepl = detectNodeRepl();
   const mcpBlocks = [
@@ -131,8 +145,8 @@ ${DRY ? '模式: --dry-run（只打印计划，不执行）' : '模式: 执行'}
     log('  所有 MCP 段已存在，无改动');
   }
 
-  // ── 5. 质量节拍 skill ──
-  log('\n[5/6] 质量节拍 skill...');
+  // ── 6. 质量节拍 skill ──
+  log('\n[6/7] 质量节拍 skill...');
   if (fs.existsSync(SKILL_DEST)) { log(`  已存在: ${SKILL_DEST}（跳过 clone）`); }
   else if (YES) {
     fs.mkdirSync(path.dirname(SKILL_DEST), { recursive: true });
@@ -142,8 +156,8 @@ ${DRY ? '模式: --dry-run（只打印计划，不执行）' : '模式: 执行'}
     log(`  建议: git clone --depth 1 ${QR_REPO} "${SKILL_DEST}"`);
   }
 
-  // ── 6. CCG overlay 幂等追加 ──
-  log('\n[6/6] CCG overlay（追加到 ~/.codex/AGENTS.md）...');
+  // ── 7. CCG overlay 幂等追加 ──
+  log('\n[7/7] CCG overlay（追加到 ~/.codex/AGENTS.md）...');
   if (!fs.existsSync(OVERLAY)) {
     log('  未找到 ccg/codex-overlay.md，跳过');
   } else if (fs.existsSync(CODEX_AGENTS) && fs.readFileSync(CODEX_AGENTS, 'utf8').includes(OVERLAY_MARKER)) {
@@ -158,11 +172,9 @@ ${DRY ? '模式: --dry-run（只打印计划，不执行）' : '模式: 执行'}
   log('\n仍需手工（脚本不处理）:');
   log('  - Claude / antigravity / Gemini 登录与 API Key（CCG 双模型认证）');
   log('  - 目标项目初始化: node integrations/install-mechanism.js <项目> --yes');
-  log('    （该脚本自动执行 openspec init --force + codegraph init + 模板复制）');
-  log('  - 质量节拍项目门禁: npx github:Colinchiu007/quality-rhythm/installer（交互式）');
+  log('    （该脚本自动执行 openspec init + codegraph init + 模板 + 门禁产物复制）');
   log('  - Codex 完全重启（.agents/skills 与 AGENTS.md 启动时加载）');
-  log('  - 验证门禁: 项目初始化后运行 node integrations/verify-env.js <项目>');
-  log('    （install-mechanism.js 会自动调用；任一 FAIL 会阻塞完成）');
+  log('  - 验证门禁: node integrations/verify-env.js <项目>（install-mechanism 会自动调用）');
   log('  - 生效验证: 见 integrations/env-checklist.md 第 7 节');
 
   log('\n完成。');

@@ -90,11 +90,15 @@ function check() {
   } else record('FAIL', 'config.toml', '~/.codex/config.toml 不存在');
 
   // 8. CCG 双模型认证（WARN 不阻塞）
-  const wrapper = ['C:/Users/邱领/.claude/bin/codeagent-wrapper.exe', 'codeagent-wrapper'].some((c) => {
-    try { execSync(c, { stdio: 'pipe', timeout: 5000 }); return true; } catch { return false; }
-  });
+  // wrapper 检测：优先文件存在性（Windows 常见路径），再退命令存在性（避免误报）
+  const wrapperFiles = [
+    path.join(HOME, '.claude', 'bin', 'codeagent-wrapper.exe'),
+    path.join(HOME, '.claude', 'bin', 'codeagent-wrapper'),
+    '/usr/local/bin/codeagent-wrapper',
+  ];
+  const wrapperExists = wrapperFiles.some((f) => fs.existsSync(f)) || hasCmd('codeagent-wrapper');
   const authChecks = [];
-  if (wrapper) authChecks.push('codeagent-wrapper ✅');
+  if (wrapperExists) authChecks.push('codeagent-wrapper ✅');
   else authChecks.push('codeagent-wrapper ❌');
   authChecks.push(hasCmd('claude') ? 'claude ✅' : 'claude ❌');
   authChecks.push(hasCmd('gemini') ? 'gemini ✅' : 'gemini ❌');
