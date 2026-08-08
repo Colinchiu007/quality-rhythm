@@ -65,6 +65,11 @@ function check() {
     record('WARN', 'OpenSpec 契约', '无 specs（新项目正常，复制 spec-contract.md 后重验）');
   }
 
+  // 3.5 OpenSpec 技能（openspec init 生成于 .agents/skills；技能可见性静态代理）
+  const skillDir = path.join(TARGET, '.agents', 'skills', 'openspec-propose');
+  if (fs.existsSync(path.join(skillDir, 'SKILL.md'))) record('PASS', 'OpenSpec 技能', '.agents/skills/openspec-propose 存在');
+  else record('WARN', 'OpenSpec 技能', '未生成（openspec init 后重启 Codex；或检查 .agents/skills/openspec-*）');
+
   // 4. codegraph CLI
   if (hasCmd('codegraph')) record('PASS', 'codegraph CLI', '已安装');
   else record('FAIL', 'codegraph CLI', '未安装（bootstrap-env.js 步骤 2）');

@@ -103,19 +103,19 @@ ${DRY ? '模式: --dry-run（只打印计划，不执行）' : '模式: 执行'}
   // ── 2. fastctx ──
   log('\n[2/7] fastctx...');
   if (has('fastctx')) { log('  已安装，跳过 npm install'); }
-  else { run('npm i -g fastctx'); log('  npm i -g fastctx 完成'); }
+  else { installNpm('fastctx', 'fastctx'); }
   run('fastctx apply --yes');
   run('fastctx status');
 
   // ── 3. codegraph ──
   log('\n[3/7] codegraph...');
   if (has('codegraph')) { log('  已安装，跳过'); }
-  else { run('npm i -g @colbymchenry/codegraph'); log('  npm i -g @colbymchenry/codegraph 完成'); }
+  else { installNpm('@colbymchenry/codegraph', 'codegraph'); }
 
   // ── 4. OpenSpec CLI ──
   log('\n[4/7] OpenSpec CLI...');
   if (has('openspec')) { log('  已安装，跳过'); }
-  else { run('npm i -g @fission-ai/openspec'); log('  npm i -g @fission-ai/openspec 完成'); }
+  else { installNpm('@fission-ai/openspec', 'openspec'); }
 
   // ── 5. config.toml 合并 ──
   log('\n[5/7] ~/.codex/config.toml...');
