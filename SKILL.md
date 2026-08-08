@@ -782,9 +782,11 @@ OpenSpec（规格工件）  →  规格写成什么、如何追踪（openspec/ +
 
 **新环境安装（一键整合包 `integrations/`）：**
 ```bash
-npx ccg-workflow                    # CCG（官方，选 Codex Mode）+ 追加 ccg/codex-overlay.md
+npx ccg-workflow                            # CCG（官方，选 Codex Mode）+ 追加 ccg/codex-overlay.md
+node integrations/bootstrap-env.js --yes    # 用户级一键：fastctx/codegraph 安装 + config.toml 合并
 npm i -g @fission-ai/openspec && openspec init --tools codex --force   # OpenSpec OPSX
-node integrations/install-mechanism.js    # 复制契约/脚本/项目模板到新项目
+node integrations/install-mechanism.js      # 项目级：复制契约/脚本/项目模板到新项目
+# 完整核对清单: integrations/env-checklist.md（含生效验证）
 ```
 
 **契约真相源：** `openspec/specs/openspec-integration/spec.md`（11 条 Requirement：规格生命周期/适用范围/归档三同步/选型/差异审计/进度单一来源/归档同步检查/M+ 模板化/场景-测试映射/分层分支策略）。
