@@ -31,13 +31,19 @@ node integrations/bootstrap-env.js --dry-run  # 先看计划
 - [ ] context7（可选）：模板已含 npx 方式，无需额外装
 - [ ] Stitch/浏览器/文档等插件（可选，按需从市场启用）
 
-## 3. OpenSpec（官方 CLI，OPSX 1.8+）
+## 3. OpenSpec 与项目初始化（install-mechanism.js 自动）
 
-- [ ] `npm i -g @fission-ai/openspec`（`openspec --version` ≥ 1.8）
-- [ ] 目标项目：`openspec init --tools codex --force`（生成 `.agents/skills/openspec-*`）
-- [ ] 复制模板：`config.yaml.template`、`spec-contract.md`、`openspec-sync-check.js`（用 install-mechanism.js 一键）
+```bash
+node integrations/install-mechanism.js <项目> --yes
+# 自动：openspec init --force + 复制模板 + codegraph init + 验证
+```
+
+自动后仍须核对：
+- [ ] `openspec --version` ≥ 1.8（bootstrap-env.js 已装 CLI）
+- [ ] 项目内 `openspec init` 已执行（install-mechanism 自动；`.agents/skills/openspec-*` 生成）
 - [ ] `openspec doctor` → OpenSpec root: ok
 - [ ] `openspec list --specs` → 契约可见（按项目裁剪 11 条）
+- [ ] `codegraph status` → 索引 up to date（install-mechanism 已自动 `codegraph init`）
 
 ## 4. 质量节拍 skill
 

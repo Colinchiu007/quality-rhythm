@@ -37,35 +37,34 @@ node bootstrap-env.js --yes
 
 > 想先看会执行什么：`node bootstrap-env.js --dry-run`。手动模板参考 `codex/config.toml.template`。
 
-### 3. OpenSpec（官方 CLI，OPSX 1.8+）
+### 3. OpenSpec（CLI 已由 bootstrap 安装，确认版本）
 
 ```bash
-npm i -g @fission-ai/openspec
-cd <项目> && openspec init --tools codex --force
+openspec --version    # ≥ 1.8（bootstrap-env.js 已自动 npm i -g @fission-ai/openspec）
 ```
 
-复制本包模板（或用一键脚本）：
-- `openspec/config.yaml.template` → `openspec/config.yaml`（context 项目约定 + artifact rules）
-- `openspec/spec-contract.md` → `openspec/specs/openspec-integration/spec.md`（11 条契约，按项目裁剪）
-- `openspec/openspec-sync-check.js` → `scripts/`
+### 4. 项目初始化（一键，含 openspec init + codegraph init + 模板）
 
-### 4. 质量节拍 skill（两部分，缺一不可）
-
-**a) skill 本体**（SKILL.md + 57 技能 + integrations）——installer 不装 skill：
 ```bash
-git clone https://github.com/Colinchiu007/quality-rhythm.git
-# 复制到 ~/.agents/skills/质量节拍/（或直接使用本目录）
+node integrations/install-mechanism.js <项目> --yes
+# 自动完成：
+#   0. openspec init --tools codex --force（生成 openspec/ 目录 + .agents/skills 技能）
+#   1. 复制 config.yaml.template / spec-contract.md / openspec-sync-check.js
+#   2. 复制 AGENTS.md.snippet（追加）+ quality-gates.template.md
+#   3. codegraph init（建 .codegraph 项目索引）
+#   4. 提示 CCG / 门禁（交互式）
+#   5. 验证（openspec doctor + 检查脚本）
 ```
 
-**b) 项目门禁**（pre-commit / CI / 标记）：
+**质量节拍 skill 本体**（installer 不装 skill；bootstrap-env.js 已自动 clone）：
 ```bash
-npx github:Colinchiu007/quality-rhythm/installer
+git clone https://github.com/Colinchiu007/quality-rhythm.git   # → ~/.agents/skills/质量节拍/
 ```
 
-### 5. 项目模板
-
-- `project/AGENTS.md.snippet` → 合并进项目 `AGENTS.md`（分支分层/机制硬化）
-- `project/quality-gates.template.md` → 项目 `.quality-gates.md`
+**项目门禁**（可选，交互式）：
+```bash
+npx github:Colinchiu007/quality-rhythm/installer   # pre-commit / CI / 标记
+```
 
 ### 6. 重启 Codex + 验证
 
