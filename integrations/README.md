@@ -79,6 +79,65 @@ codegraph status                                  # 索引
 # 会话内：skills 可见 [$quality-rhythm]、/opsx:* 可用
 ```
 
+## 日常使用（装完怎么用）
+
+### 触发质量节拍
+
+- 任务开始时说「使用质量节拍」或由项目 AGENTS.md 自动触发（涉及代码修改即强制门禁）
+- 质量节拍自动路由 Phase 0-5（探索→规划→开发→交付→复盘）并执行 QM 门禁（`.quality-gates.md`）
+
+### 任务分层（收到需求先 CCG 5 秒评估）
+
+```
+S 复杂度 + 低风险   → 直接 CCG + 质量节拍，不建 change
+M+ 或中/高风险     → 必须走 OpenSpec 规格流程（本表下方）
+触红线（auth/数据库/API 契约/加密）→ 无论大小一律建 change
+```
+
+### M+/中高风险任务端到端流程
+
+```bash
+# ① 建 change（规格层）
+/opsx:propose <change-name>
+#   或命令行：openspec new change <name>
+#   → 按依赖顺序生成 proposal → design → specs → tasks
+#   → 对既有基线先做差异审计（只承载真实待办）
+
+# ② 实现（进度以 tasks.md 勾选为唯一来源）
+/opsx:apply          # 按 tasks 实施；每个任务标注测试目标（TDD）
+
+# ③ 完成归档（三同步）
+/opsx:archive        # 或 openspec archive <name> -y
+#   → 规格合入 openspec/specs/ + change 归档
+#   → CCG task 归档至 .ccg/tasks/archive/<yyyy-mm>/
+#   → 质量节拍复盘（learnings）
+node scripts/openspec-sync-check.js   # 确认无「completed 但未归档」
+```
+
+### 常用命令速查
+
+| 命令 | 用途 |
+|---|---|
+| `openspec doctor` | OpenSpec 健康检查 |
+| `openspec list` / `openspec list --specs` | active changes / 契约清单 |
+| `openspec status --change <name>` | change artifacts 进度 |
+| `openspec validate <name>` | 校验 change（spec 场景格式等） |
+| `node scripts/openspec-sync-check.js` | 归档三同步检查（CCG task ↔ change） |
+| `[$quality-rhythm](...)` | 会话内触发质量节拍技能 |
+| `/opsx:propose` `/opsx:apply` `/opsx:archive` | OpenSpec 三步命令（Codex 用 `$openspec-propose` 等） |
+
+### 端到端示例（一次真实迭代）
+
+```
+需求: "图片轮播加 TTS 音色复制"（M/中风险）
+① CCG 评估 → M/中风险 → 建 change: /opsx:propose story2video-tts-copy
+② quality-rhythm Phase 0-1: 需求确认 + 设计评审（门禁通过）
+③ 实现: /opsx:apply → tasks.md 逐项勾选（每项带测试）
+④ Phase 2-3 门禁: 测试全绿 + QM 检查 + 视觉回归
+⑤ /opsx:archive → 规格合入 specs/ + CCG task 归档 + 复盘
+⑥ node scripts/openspec-sync-check.js → OK（无警告）
+```
+
 ## 整合包结构
 
 ```
