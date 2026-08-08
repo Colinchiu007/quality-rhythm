@@ -17,11 +17,17 @@
 - [ ] 双模型认证：antigravity 或 Gemini CLI 登录 + Claude 登录（`codeagent-wrapper --backend <x> --version` 可跑）
 - [ ] `~/.codex/config.toml` 含 `[features.multi_agent_v2]`（max_concurrent_threads_per_session=6、wait 480s——官方 Codex 模板自带）
 
-## 2. MCP 工具链（机制依赖，易漏！）
+## 2. MCP 工具链（可用 bootstrap-env.js 自动完成）
 
-- [ ] **fastctx**：`npm i -g fastctx` + `fastctx apply --yes` + `fastctx status`（要求 MCP handshake PASS）
-- [ ] **codegraph**：`npm i -g <codegraph>` + `codegraph init`（目标项目）+ `codegraph status`（索引 up to date）
-- [ ] **config.toml 模板**：复制 `integrations/codex/config.toml.template` → `~/.codex/config.toml`，替换 `{{FASTCTX_BIN}}`/`{{NODE_REPL_EXE}}` 占位符
+```bash
+node integrations/bootstrap-env.js --yes    # 自动：fastctx 安装+apply / codegraph 安装 / config.toml 合并
+node integrations/bootstrap-env.js --dry-run  # 先看计划
+```
+
+自动后仍须逐项核对结果：
+- [ ] **fastctx**：`fastctx status`（要求 MCP handshake PASS；bootstrap 已执行 apply）
+- [ ] **codegraph**：`codegraph --version`（bootstrap 已装 `@colbymchenry/codegraph`）；目标项目 `codegraph init` + `codegraph status`（索引 up to date——bootstrap 不建索引，需在项目内执行）
+- [ ] **config.toml**：bootstrap 已备份并追加缺失 MCP 段；检查 `~/.codex/config.toml` 含 `[mcp_servers.fastctx]`/`[mcp_servers.codegraph]` 且路径非 `{{...}}` 占位符
 - [ ] context7（可选）：模板已含 npx 方式，无需额外装
 - [ ] Stitch/浏览器/文档等插件（可选，按需从市场启用）
 

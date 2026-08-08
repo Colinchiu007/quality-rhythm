@@ -22,14 +22,20 @@ npx ccg-workflow        # 交互式菜单 → 选 "X. Codex Mode"
 
 **双模型认证（手工）**：Claude Code 登录 + antigravity/Gemini CLI 登录 + API Key 配置——没有认证则 CCG 退化为单模型 + 子代理，机制文本仍生效但双模型交叉验证不可用。
 
-### 2. MCP 工具链（机制依赖，易漏！）
+### 2. MCP 工具链（自动，一条命令）
 
 ```bash
-npm i -g fastctx && fastctx apply --yes && fastctx status   # fastctx（overlay 依赖）
-npm i -g <codegraph> && cd <项目> && codegraph init          # codegraph（CCG 路由依赖）
+node bootstrap-env.js --yes
+# 自动完成：
+#   1. fastctx：npm i -g fastctx + fastctx apply --yes + status
+#   2. codegraph：npm i -g @colbymchenry/codegraph（已装跳过）
+#   3. ~/.codex/config.toml：备份后只追加缺失的 [mcp_servers.*] 段
+#      （fastctx / node_repl 路径自动检测，不覆盖已有配置，无密钥）
+#   4. 可选 git clone quality-rhythm → ~/.agents/skills/质量节拍
+# 输出「仍需手工」清单（认证 + 重启）
 ```
 
-复制 `codex/config.toml.template` → `~/.codex/config.toml`，替换 `{{FASTCTX_BIN}}` 等占位符。
+> 想先看会执行什么：`node bootstrap-env.js --dry-run`。手动模板参考 `codex/config.toml.template`。
 
 ### 3. OpenSpec（官方 CLI，OPSX 1.8+）
 
