@@ -161,6 +161,8 @@ ${DRY ? '模式: --dry-run（只打印计划，不执行）' : '模式: 执行'}
   log('    （该脚本自动执行 openspec init --force + codegraph init + 模板复制）');
   log('  - 质量节拍项目门禁: npx github:Colinchiu007/quality-rhythm/installer（交互式）');
   log('  - Codex 完全重启（.agents/skills 与 AGENTS.md 启动时加载）');
+  log('  - 验证门禁: 项目初始化后运行 node integrations/verify-env.js <项目>');
+  log('    （install-mechanism.js 会自动调用；任一 FAIL 会阻塞完成）');
   log('  - 生效验证: 见 integrations/env-checklist.md 第 7 节');
 
   log('\n完成。');

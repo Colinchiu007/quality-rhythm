@@ -110,8 +110,8 @@ async function main() {
     if (ok) execSync('npx ccg-workflow', { cwd: TARGET, stdio: 'inherit' });
   }
 
-  // ── 5. 验证 ──
-  console.log('\n[5/5] 验证...');
+  // ── 5. 验证门禁 ──
+  console.log('\n[5/5] 验证门禁...');
   try {
     const out = execSync('openspec doctor 2>&1', { cwd: TARGET, encoding: 'utf8' });
     console.log(out.split('\n').slice(0, 4).join('\n'));
@@ -121,6 +121,19 @@ async function main() {
   try {
     execSync('node scripts/openspec-sync-check.js', { cwd: TARGET, stdio: 'inherit' });
   } catch (_) { /* 非零退出 = 有未归档警告，属正常输出 */ }
+
+  // 强制验证门禁：verify-env.js（任一 FAIL → 非零退出）
+  const verify = path.join(SCRIPT_DIR, 'verify-env.js');
+  if (fs.existsSync(verify)) {
+    console.log('\n[门禁] verify-env.js（FAIL 项会阻塞完成）...');
+    try {
+      execSync(`node "${verify}" "${TARGET}"`, { stdio: 'inherit' });
+    } catch (_) {
+      console.error('\n❌ 验证门禁未通过。请修复 FAIL 项后重跑 install-mechanism.js。');
+      process.exitCode = 1;
+      return;
+    }
+  }
 
   console.log('\n完成。重启 Codex 使 .agents/skills 技能生效。');
   console.log('完整核对: integrations/env-checklist.md（含生效验证第 7 节）。');

@@ -63,13 +63,15 @@ node integrations/install-mechanism.js <项目> --yes
 
 - [ ] 完全重启 Codex 应用（.agents/skills、openspec 技能、AGENTS.md 都是启动时加载）
 
-## 7. 生效验证（重启后逐项）
+## 7. 生效验证（验证门禁 + 重启后逐项）
 
+**自动门禁（任一 FAIL 阻塞完成）：**
+- [ ] `node verify-env.js <项目>` → 输出 PASS/FAIL 报告；FAIL 项修复后重跑（install-mechanism.js 会自动调用）
+
+**重启 Codex 后逐项：**
 - [ ] 会话 skills 列表可见：openspec-propose / openspec-apply-change / 质量节拍（`[$quality-rhythm]` 可触发）
-- [ ] `openspec doctor` OK；`openspec list --specs` 有契约
+- [ ] 重跑 `node verify-env.js <项目>` → WARN 项收敛（fastctx status 全 PASS、认证已配置）
 - [ ] `node scripts/openspec-sync-check.js` → OK（无未归档警告）
-- [ ] `fastctx status` → MCP handshake PASS
-- [ ] `codegraph status` → 索引 up to date
 - [ ] CCG 双模型 smoke：对 M 级任务触发双模型分析，两路都有产出（而非只一路/报错）
 - [ ] 首次 M+/中高风险任务走完整链路：CCG 评估 → 质量节拍门禁 → `/opsx:propose` → 实现 → archive 三同步
 

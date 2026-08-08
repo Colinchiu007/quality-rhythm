@@ -143,7 +143,9 @@ node scripts/openspec-sync-check.js   # 确认无「completed 但未归档」
 integrations/
 ├── README.md                  ← 本文件
 ├── env-checklist.md           ← 完整核对清单（含生效验证，必读）
-├── install-mechanism.js       ← 一键复制模板脚本（已验证）
+├── bootstrap-env.js           ← 用户级一键（fastctx/codegraph/openspec CLI/config.toml/overlay）
+├── install-mechanism.js       ← 项目级一键（openspec init/codegraph init/模板复制）
+├── verify-env.js              ← 验证门禁（PASS/FAIL 报告；FAIL 阻塞完成）
 ├── ccg/codex-overlay.md       ← CCG 本地增强区块（官方安装后追加）
 ├── codex/config.toml.template ← ~/.codex/config.toml 骨架（MCP 配置，无密钥）
 ├── openspec/
