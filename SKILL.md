@@ -763,6 +763,34 @@ cp rules/<framework>.mdc .cursorrules
 - **awesome-cursorrules**：定义"怎么写"（编码规范 + 最佳实践）
 - 两者互补：Preset 管需求质量，cursorrules 管代码质量
 
+## 第 5.6 节：机制集成（OpenSpec + CCG 三层分工）
+
+质量节拍是**流程门禁层**，与另外两层机制协同：
+
+```
+CCG（决策/执行编排）  →  怎么分析、谁来做、做到哪（~/.codex/AGENTS.md + .ccg/tasks）
+质量节拍（本 skill）  →  什么节奏、过什么门禁（Phase 0-5 + QM + .quality-gates.md）
+OpenSpec（规格工件）  →  规格写成什么、如何追踪（openspec/ + /opsx:* 命令）
+```
+
+**适用范围（OpenSpec 契约固化）：**
+- M+ 复杂度或中/高风险任务 → 必须建 OpenSpec change（proposal→design→specs→tasks→archive）
+- S 复杂度且低风险 → 直接 CCG + 质量节拍，不强制建 change
+- 差异审计前置：对既有基线建 change 前先核对已合并交付
+- 归档三同步：openspec archive + CCG task 归档 + 质量节拍复盘（scripts/openspec-sync-check.js 检查）
+- 分层分支策略：运行时代码走分支+PR；纯流程/文档可 main 小步提交
+
+**新环境安装（一键整合包 `integrations/`）：**
+```bash
+npx ccg-workflow                    # CCG（官方，选 Codex Mode）+ 追加 ccg/codex-overlay.md
+npm i -g @fission-ai/openspec && openspec init --tools codex --force   # OpenSpec OPSX
+node integrations/install-mechanism.js    # 复制契约/脚本/项目模板到新项目
+```
+
+**契约真相源：** `openspec/specs/openspec-integration/spec.md`（11 条 Requirement：规格生命周期/适用范围/归档三同步/选型/差异审计/进度单一来源/归档同步检查/M+ 模板化/场景-测试映射/分层分支策略）。
+
+---
+
 ## 第六章：特殊场景映射表（完整版）
 
 当你说以下任意一句话时，AI 自动路由到对应的技能组合：
