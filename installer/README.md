@@ -28,8 +28,8 @@ npx github:Colinchiu007/quality-rhythm/installer
 | `.husky/install.js` | 钩子安装脚本 |
 | `.github/workflows/quality-gate.yml` | CI 自动跑测试+代码质量+合规检查 |
 | `.quality-rhythm` | 项目标记文件 |
-| `.claude/commands/质量节拍.md` | Claude Code 斜杠命令 |
-| `.cursor/commands/质量节拍.md` | Cursor 斜杠命令 |
+| `.claude/commands/质量节拍.md` | Claude Code 斜杠命令（单一来源 `installer/commands/质量节拍.md`，install-mechanism.js 自动复制） |
+| `.cursor/commands/质量节拍.md` | Cursor 斜杠命令（同上，自动复制） |
 | AGENTS.md | 追加强制质量流程段落 |
 
 ## 前提

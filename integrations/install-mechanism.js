@@ -114,6 +114,9 @@ async function main() {
   copy(path.join(QR_SKILL_ROOT, 'installer', 'husky', 'pre-commit.js'), path.join(TARGET, '.husky', 'pre-commit.js'));
   copy(path.join(QR_SKILL_ROOT, 'installer', 'husky', 'install.js'), path.join(TARGET, '.husky', 'install.js'));
   copy(path.join(QR_SKILL_ROOT, 'installer', 'github', 'branch-protection.json'), path.join(TARGET, '.github', 'branch-protection.json'));
+  // 斜杠命令（单一来源 installer/commands/质量节拍.md；Claude Code + Cursor）
+  copy(path.join(QR_SKILL_ROOT, 'installer', 'commands', '质量节拍.md'), path.join(TARGET, '.claude', 'commands', '质量节拍.md'));
+  copy(path.join(QR_SKILL_ROOT, 'installer', 'commands', '质量节拍.md'), path.join(TARGET, '.cursor', 'commands', '质量节拍.md'));
 
   // quality-gate.yml + .quality-gates.md：由 ci-hardening 脚手架渲染生成（单一来源 = skills/other/ci-hardening/assets/templates/）
   // 避免与 installer/github/quality-gate.yml（旧版串行/双跑）漂移；并行 + 触发去重是 ci-hardening 方法论标准。

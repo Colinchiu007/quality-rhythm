@@ -53,6 +53,14 @@ test('quality-gates.md.tpl 含「本次执行记录」节（pre-commit 审计依
   assert.ok(tpl.includes('提交前自检'), '必须含自检说明');
 });
 
+test('installer 斜杠命令模板存在且非空（install-mechanism 复制依赖）', () => {
+  const cmdFile = path.join(ROOT, 'installer', 'commands', '质量节拍.md');
+  assert.ok(fs.existsSync(cmdFile), 'installer/commands/质量节拍.md 必须存在');
+  const content = fs.readFileSync(cmdFile, 'utf8');
+  assert.ok(content.includes('质量节拍'), '命令模板必须含技能名');
+  assert.ok(content.trim().length > 20, '命令模板不得为空');
+});
+
 test('DEFAULTS 中性化：不得含 Multi-Publish 特有路径', () => {
   const src = fs.readFileSync(APPLY, 'utf8');
   const m = src.match(/const DEFAULTS = \{([\s\S]*?)\n\};/);
