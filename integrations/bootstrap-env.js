@@ -44,6 +44,16 @@ function run(cmd, opts = {}) {
 function has(cmd) {
   try { execSync(`${cmd} --version`, { stdio: 'pipe', encoding: 'utf8', timeout: 15000 }); return true; } catch { return false; }
 }
+function installNpm(pkg, bin) {
+  if (DRY) { log(`  [dry-run] 将执行: npm i -g ${pkg}`); return; }
+  const out = run(`npm i -g ${pkg} --no-fund --no-audit`, { cwd: HOME });
+  if (!has(bin)) {
+    log(`  ⚠️ ${pkg} 安装后 ${bin} 仍不可用（检查 PATH / 网络）`);
+    log(`    ${String(out).trim().split(
+).slice(-3).join(
+)} || 无输出`);
+  }
+}
 function detectFastCtxBin() {
   const candidates = [
     path.join(HOME, '.fastctx', 'bin', 'fastctx.exe'),
