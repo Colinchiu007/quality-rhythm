@@ -29,7 +29,7 @@ const AGENTS_APPEND = `
 - 阶段检查（每 Phase 结束）：verification-before-completion → /health → documentation-and-adrs
 - 特殊场景（按需触发）：/investigate | /cso | defense-in-depth | ...
 
-详细定义见 \`.codex/skills/质量节拍/SKILL.md\` 或 quality-rhythm skill。
+详细定义见 \`.agents/skills/质量节拍/SKILL.md\` 或 quality-rhythm skill。
 
 违规后果：
 - 跳过 TDD 直接写代码 = 代码不被接受

@@ -50,6 +50,7 @@ node integrations/install-mechanism.js <项目> --yes
 - [ ] **skill 目录**：bootstrap-env.js 已自动 clone（`~/.agents/skills/质量节拍/`）；缺失时手工 `git clone https://github.com/Colinchiu007/quality-rhythm.git`
 - [ ] **项目门禁产物**：install-mechanism.js 已自动复制（`.quality-rhythm` 标记 + `.husky/pre-commit.js` + `.github/workflows/quality-gate.yml` + `branch-protection.json`）
 - [ ] husky 钩子注册：项目内执行 `node .husky/install.js`（一次）
+- [ ] pre-commit 强制勾选：提交前在 `.quality-gates.md`「## 本次执行记录」节追加 `## <日期> <任务> 提交前自检` + `- [x]` 全勾选；有 `- [ ]` 或缺失记录 → commit 被拒
 - [ ] `~/.codex/config.toml` 或项目 AGENTS.md 能路由到质量节拍 skill
 
 ## 5. 项目模板
