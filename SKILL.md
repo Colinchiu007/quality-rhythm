@@ -820,7 +820,7 @@ node skills/other/ci-hardening/scripts/analyze-ci-steps.js <run-id>
 ### 与质量节拍的协同
 
 - **M4 三层门禁**：本地提交门禁（.quality-gates.md + husky）→ 流程 skill（质量节拍 Phase 0-5 + 日常循环 ⑦ CI 验证）→ 远程 CI（GitHub Actions PR 触发）——ci-hardening 是三层中的「远程 CI」层专用技能。
-- **husky pre-commit 强制勾选**：`.husky/pre-commit.js` 在提交前强制校验 `.quality-gates.md`「## 本次执行记录」节中最近一条 `## <日期> <任务> 提交前自检` 记录必须全部勾选（`- [x]`）；无记录或存在 `- [ ]` 未勾选项 → commit 被拒。文件缺失仅 WARN 不阻塞（兼容未初始化项目）。
+- **husky pre-commit 自动化门禁**：`.husky/pre-commit.js` 提交前自动执行真实检查并生成审计记录——① 禁 protected 分支直提；② 变更源文件必须有对应测试；③ 自动语法检查（`node --check`，staged js/ts）；④ 自动密钥/敏感信息扫描（高置信模式，排除 .env.example/.md/.json 等占位文件）；⑤ 全部通过后自动在 `.quality-gates.md`「## 本次执行记录」节追加 `## <日期> <分支> <N> 个文件 提交前自检（自动）` + `- [x]` 已通过项（含证据），随提交入库（幂等：同标题不重复追加）。任一检查失败 → commit 被拒；`.quality-gates.md` 缺失仅 WARN 不阻塞（兼容未初始化项目）。深度验证（测试运行/覆盖率/视觉/E2E/安全）由 CI quality-gate 自动执行。
 - **M5 交付节奏**：隔离 worktree → 分支+PR → 双模型审查 → 全量测试+契约测试 → 合并 → 归档三同步——与质量节拍 / 第一章分层分支策略完全一致。
 - **契约测试前置**：改 workflow 前必须全仓 grep 契约测试（`.github/scripts/*.test.js` 与 `*/tests/*.test.js`），改结构后本地跑通再推 CI——这是对质量节拍「测试是底线」的 CI 域落地。
 

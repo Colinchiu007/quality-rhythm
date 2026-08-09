@@ -24,7 +24,7 @@ npx github:Colinchiu007/quality-rhythm/installer
 
 | 文件 | 作用 |
 |------|------|
-| `.husky/pre-commit.js` | 改代码必须带测试 + 禁 main 直提 + `.quality-gates.md` 执行记录必须全部勾选，否则 commit 被拒 |
+| `.husky/pre-commit.js` | 自动化门禁：禁 main 直提 + 源码必须带测试 + 自动语法检查（node --check）+ 自动密钥扫描 + 自动生成 `.quality-gates.md` 审计记录，任一失败 commit 被拒 |
 | `.husky/install.js` | 钩子安装脚本 |
 | `.github/workflows/quality-gate.yml` | CI 自动跑测试+代码质量+合规检查 |
 | `.quality-rhythm` | 项目标记文件 |
