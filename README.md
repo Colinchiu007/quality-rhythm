@@ -63,7 +63,8 @@
 │   │   └── ...（完整列表见 skills/addy-agent/）
 │   │
 │   └── other/                        ← 其他参考技能
-│       └── bug-reflection/
+│       ├── bug-reflection/
+│       └── ci-hardening/            → CI/CD 硬化：runner 迁移、Quality Gate 并行化、触发去重、workflow 契约同步（含模板+脚本）
 │
 └── references/                        ← 项目开发知识库参考文件（9 篇）
     ├── quality-playbook-ai-prompt.md

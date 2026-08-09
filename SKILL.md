@@ -105,7 +105,7 @@ type: workflow
 │  Phase 3: 交付期 (Ship)                                                 │
 │  ├── 3.1 发布审查 ──→ /review (完整), /ship                            │
 │  ├── 3.2 灰度验证 ──→ /canary, /browse, pair-agent, Dogfooding检查清单      │
-│  ├── 3.3 发布上线 ──→ /land-and-deploy, ci-cd-and-automation, 部署手册   │
+│  ├── 3.3 发布上线 ──→ /land-and-deploy, ci-cd-and-automation, /ci-hardening, 部署手册 │
 │  ├── 3.4 文档同步 ──→ /document-release                                 │
 │  ├── 3.5 用户说明 ──→ User Manual / 使用说明                      │
 │  ├── 3.6 决策归档 ──→ Decision Log (决策+理由+替代方案)            │
@@ -793,6 +793,48 @@ node integrations/install-mechanism.js      # 项目级：复制契约/脚本/�
 
 ---
 
+## 第 5.7 节：CI 硬化技能（ci-hardening）集成
+
+质量节拍触发条件已覆盖「配置变更：环境配置、CI/CD、依赖调整」，CI 硬化任务由独立子技能 **ci-hardening** 承接（`skills/other/ci-hardening/`，随本仓库分发）。
+
+### 触发场景
+
+- 「CI 太慢 / 排队久 / 优化 Quality Gate」→ 迁移判断 + 瓶颈实测（M1/M2）
+- 「把 CI 从自托管/ECS runner 迁到 GitHub 官方 runner」→ 适配点核对 + 迁移验证（M1）
+- 「修改 / 新建 `.github/workflows/*.yml`」→ 全仓契约测试排查 + 结构同步（M3，必做）
+- 「给新项目初始化质量门禁」→ 并行 quality-gate.yml + 本地 .quality-gates.md + 可选 electron-ci.yml（M4/B+C 脚手架）
+
+### 使用方式
+
+```bash
+# 读方法论（M1 迁移判断 / M2 优化法 / M3 契约同步法 / M4 三层门禁 / M5 交付节奏）
+references/methodology.md
+
+# 新项目门禁脚手架（B+C 集成）
+node skills/other/ci-hardening/scripts/apply-ci-hardening.js --repo <target> [--with-electron] [--dry-run]
+
+# 既有 CI 瓶颈实测（M2）
+node skills/other/ci-hardening/scripts/analyze-ci-steps.js <run-id>
+```
+
+### 与质量节拍的协同
+
+- **M4 三层门禁**：本地提交门禁（.quality-gates.md + husky）→ 流程 skill（质量节拍 Phase 0-5 + 日常循环 ⑦ CI 验证）→ 远程 CI（GitHub Actions PR 触发）——ci-hardening 是三层中的「远程 CI」层专用技能。
+- **M5 交付节奏**：隔离 worktree → 分支+PR → 双模型审查 → 全量测试+契约测试 → 合并 → 归档三同步——与质量节拍 / 第一章分层分支策略完全一致。
+- **契约测试前置**：改 workflow 前必须全仓 grep 契约测试（`.github/scripts/*.test.js` 与 `*/tests/*.test.js`），改结构后本地跑通再推 CI——这是对质量节拍「测试是底线」的 CI 域落地。
+
+### 资源清单
+
+| 资源 | 说明 |
+|------|------|
+| `SKILL.md` | 技能入口（触发/步骤/铁律） |
+| `references/methodology.md` | M1-M5 方法论 + 新项目通用清单 |
+| `assets/templates/` | quality-gate.yml.tpl / electron-ci.yml.tpl / quality-gates.md.tpl（参数化模板） |
+| `scripts/` | apply-ci-hardening.js（脚手架）/ analyze-ci-steps.js（瓶颈分析） |
+| `agents/openai.yaml` | 多 Agent 角色定义（可选） |
+
+---
+
 ## 第六章：特殊场景映射表（完整版）
 
 当你说以下任意一句话时，AI 自动路由到对应的技能组合：
@@ -831,6 +873,7 @@ node integrations/install-mechanism.js      # 项目级：复制契约/脚本/�
 "AI 怎么用"                             /ai-collaboration (Pillar 1-4)
 "这个模式反复出现"                       /learn skillify
 "环境配置"                              setup-deploy + ci-cd-and-automation
+"CI 太慢/优化 CI"                        /ci-hardening（迁移 runner、并行化、触发去重、契约同步）
 "紧急修复"                          热修复通道（快速通道）
 "轻量模式"                          轻量模式（跳过非必要阶段）
 "版本管理"                              git-workflow-and-versioning

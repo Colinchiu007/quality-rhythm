@@ -19,6 +19,8 @@ jobs:
           node --check integrations/bootstrap-env.js
           node --check integrations/install-mechanism.js
           node --check integrations/verify-env.js
+          node --check skills/other/ci-hardening/scripts/apply-ci-hardening.js
+          node --check skills/other/ci-hardening/scripts/analyze-ci-steps.js
       - name: bootstrap dry-run (plan only, no side effects)
         run: node integrations/bootstrap-env.js --dry-run
 
