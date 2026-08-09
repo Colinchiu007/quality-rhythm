@@ -135,7 +135,7 @@ type: workflow
 | **Superpowers (11)** | subagent-driven-development, executing-plans, writing-plans, requesting-code-review, receiving-code-review, dispatching-parallel-agents, finishing-a-development-branch, systematic-debugging, root-cause-tracing, verification-before-completion, test-driven-development, testing-anti-patterns, condition-based-waiting, remembering-conversations, using-git-worktrees, brainstorming, defense-in-depth |
 | **Addy-Agent (15)** | planning-and-task-breakdown, spec-driven-development, incremental-implementation, code-review-and-quality, idea-refine, shipping-and-launch, ci-cd-and-automation, documentation-and-adrs, source-driven-development, doubt-driven-development, code-simplification, context-engineering, api-and-interface-design, frontend-ui-engineering, performance-optimization, observability-and-instrumentation, security-and-hardening, git-workflow-and-versioning, deprecation-and-migration, interview-me |
 | **Spec Kit 集成 (1 Preset)** | quality-rhythm-sdd: Spec Kit Preset，增强 spec-template / plan-template / clarify / checklist |
-| **总计** | **57 个技能 + 1 Spec Kit Preset + awesome-cursorrules 引用** |
+| **总计** | **58 个技能 + 1 Spec Kit Preset + awesome-cursorrules 引用** |
 
 ---
 
@@ -578,7 +578,7 @@ Phase 3 门禁  → /qa 中 [必] 视觉回归测试
 
 ---
 
-## 第五章：57 个技能的集成与映射
+## 第五章：58 个技能的集成与映射
 
 ### 5.1 gstack 核心技能（27 个）
 

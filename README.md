@@ -111,9 +111,10 @@ Phase 5: 运营期 — 排查、性能、可观测、安全
 首次使用：`使用质量节拍，当前焦点：[Phase 编号] —— [子任务名称]`
 后续使用：`遵循质量节拍。当前焦点：[新子任务]`
 
-## 集成的 52+ 个技能
+## 集成的 58 个技能
 
-质量节拍集成了 gstack 核心技能、Superpowers Skills 和 Addy-Agent Skills，
+质量节拍集成了 gstack 核心技能、Superpowers Skills、Addy-Agent Skills 和
+ci-hardening（CI/CD 硬化：runner 迁移、Quality Gate 并行化、触发去重、workflow 契约同步），
 覆盖从需求到运营的完整开发流程。详见 SKILL.md 第五章。
 
 ### Spec Kit 集成（quality-rhythm-sdd Preset）

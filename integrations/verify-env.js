@@ -13,7 +13,8 @@
  *   5. codegraph 项目索引（.codegraph 存在 / status）
  *   6. fastctx CLI + fastctx status
  *   7. ~/.codex/config.toml 含 [mcp_servers.fastctx] 与 [mcp_servers.codegraph]
- *   8. CCG 双模型认证（WARN 不阻塞）：codeagent-wrapper / claude / gemini / antigravity
+ *   8. 门禁产物（quality-gate.yml 并行版 + .quality-gates.md 存在；缺失 FAIL）
+ *   9. CCG 双模型认证（WARN 不阻塞）：codeagent-wrapper / claude / gemini / antigravity
  *
  * 任一 FAIL → 退出码 1（阻塞"完成"）；WARN 不阻塞但醒目提示。
  */
@@ -101,7 +102,25 @@ function check() {
     else record('WARN', 'config.toml MCP 段', `fastctx=${f} codegraph=${c}（缺失项用 bootstrap-env.js 补齐）`);
   } else record('FAIL', 'config.toml', '~/.codex/config.toml 不存在');
 
-  // 8. CCG 双模型认证（WARN 不阻塞）
+  // 8. 门禁产物（ci-hardening 脚手架渲染结果；缺失/旧版串行双跑 → FAIL）
+  const qgPath = path.join(TARGET, '.github', 'workflows', 'quality-gate.yml');
+  const qgatesPath = path.join(TARGET, '.quality-gates.md');
+  if (fs.existsSync(qgPath) && fs.existsSync(qgatesPath)) {
+    const qg = fs.readFileSync(qgPath, 'utf8');
+    const hasParallel = qg.includes('static-gates') && qg.includes('unit-tests');
+    const hasLegacyTrigger = qg.includes('branches-ignore');
+    const hasPlaceholder = /{{[A-Z_]+}}/.test(qg);
+    if (hasParallel && !hasLegacyTrigger && !hasPlaceholder) {
+      record('PASS', '门禁产物', 'quality-gate.yml 并行版 + .quality-gates.md（无旧双跑触发/无占位符）');
+    } else {
+      const why = hasLegacyTrigger ? '仍含 branches-ignore 旧双跑触发' : hasPlaceholder ? '含未替换占位符 {{VARS}}' : '缺 static-gates/unit-tests 并行 job';
+      record('FAIL', '门禁产物', 'quality-gate.yml ' + why + '（重跑 install-mechanism.js 或 apply-ci-hardening.js）');
+    }
+  } else {
+    record('FAIL', '门禁产物', '缺 quality-gate.yml 或 .quality-gates.md（install-mechanism.js 应已生成）');
+  }
+
+  // 9. CCG 双模型认证（WARN 不阻塞）
   // wrapper 检测：优先文件存在性（Windows 常见路径），再退命令存在性（避免误报）
   const wrapperFiles = [
     path.join(HOME, '.claude', 'bin', 'codeagent-wrapper.exe'),
