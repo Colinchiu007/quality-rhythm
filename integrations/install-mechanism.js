@@ -8,7 +8,7 @@
  * 功能（自动初始化）：
  *   0. openspec init --tools codex,claude,cursor,opencode --force（多 IDE 技能）
  *   1. 复制 OpenSpec 模板（config.yaml / spec-contract.md / 检查脚本）
- *   2. 复制项目模板（AGENTS.md.snippet 幂等追加 / quality-gates.template.md）
+ *   2. 复制项目模板（AGENTS.md.snippet 幂等追加）
  *   3. codegraph init（建项目索引）
  *   4. 复制质量节拍项目门禁产物（.quality-rhythm 标记 / husky pre-commit / GitHub workflow）——不再依赖交互式 installer
  *   5. 提示 CCG 官方安装（交互式，不自动）
@@ -93,7 +93,7 @@ async function main() {
       else fs.writeFileSync(agDest, snippet);
       console.log('✅ AGENTS.md 机制片段');
     }
-    copy(path.join(pjDir, 'quality-gates.template.md'), path.join(TARGET, '.quality-gates.md'));
+    // .quality-gates.md 由 ci-hardening 脚手架渲染生成（单一来源：skills/other/ci-hardening/assets/templates/quality-gates.md.tpl）
   } else {
     console.warn('\n[2/6] 未找到 project/ 模板目录，跳过。');
   }
@@ -113,8 +113,21 @@ async function main() {
   console.log('✅ .quality-rhythm 标记');
   copy(path.join(QR_SKILL_ROOT, 'installer', 'husky', 'pre-commit.js'), path.join(TARGET, '.husky', 'pre-commit.js'));
   copy(path.join(QR_SKILL_ROOT, 'installer', 'husky', 'install.js'), path.join(TARGET, '.husky', 'install.js'));
-  copy(path.join(QR_SKILL_ROOT, 'installer', 'github', 'quality-gate.yml'), path.join(TARGET, '.github', 'workflows', 'quality-gate.yml'));
   copy(path.join(QR_SKILL_ROOT, 'installer', 'github', 'branch-protection.json'), path.join(TARGET, '.github', 'branch-protection.json'));
+
+  // quality-gate.yml + .quality-gates.md：由 ci-hardening 脚手架渲染生成（单一来源 = skills/other/ci-hardening/assets/templates/）
+  // 避免与 installer/github/quality-gate.yml（旧版串行/双跑）漂移；并行 + 触发去重是 ci-hardening 方法论标准。
+  const applyCiHardening = path.join(QR_SKILL_ROOT, 'skills', 'other', 'ci-hardening', 'scripts', 'apply-ci-hardening.js');
+  if (fs.existsSync(applyCiHardening)) {
+    try {
+      execSync(`node "${applyCiHardening}" --repo "${TARGET}"`, { stdio: 'inherit' });
+      console.log('✅ .github/workflows/quality-gate.yml + .quality-gates.md（ci-hardening 渲染）');
+    } catch (e) {
+      console.warn(`⚠️ ci-hardening 脚手架执行失败（${String(e.message).split(String.fromCharCode(10))[0]}）——请检查目标是否已有 package.json/.git`);
+    }
+  } else {
+    console.warn('⚠️ 未找到 ci-hardening 脚手架脚本，跳过 quality-gate.yml 生成');
+  }
 
   // husky 钩子自动注册（install.js 非交互；需 .git 存在）
   if (fs.existsSync(path.join(TARGET, '.git'))) {

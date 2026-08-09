@@ -50,7 +50,7 @@ node integrations/install-mechanism.js <项目> --yes
 # 自动完成：
 #   0. openspec init --tools codex --force（生成 openspec/ 目录 + .agents/skills 技能）
 #   1. 复制 config.yaml.template / spec-contract.md / openspec-sync-check.js
-#   2. 复制 AGENTS.md.snippet（追加）+ quality-gates.template.md
+#   2. 复制 AGENTS.md.snippet（追加）；.quality-gates.md 由 ci-hardening 脚手架渲染
 #   3. codegraph init（建 .codegraph 项目索引）
 #   4. 提示 CCG / 门禁（交互式）
 #   5. 验证（openspec doctor + 检查脚本）
@@ -61,8 +61,9 @@ node integrations/install-mechanism.js <项目> --yes
 git clone https://github.com/Colinchiu007/quality-rhythm.git   # → ~/.agents/skills/质量节拍/
 ```
 
-**项目门禁**（install-mechanism.js 已自动复制产物，无需交互 installer）：
-- `.quality-rhythm` 标记 + `.husky/pre-commit.js` + `.github/workflows/quality-gate.yml` + `branch-protection.json`
+**项目门禁**（install-mechanism.js 已自动生成产物，无需交互 installer）：
+- `.quality-rhythm` 标记 + `.husky/pre-commit.js` + `branch-protection.json`
+- `.github/workflows/quality-gate.yml` + `.quality-gates.md` 由 ci-hardening 脚手架渲染（并行 QG + 触发去重，单一来源 `skills/other/ci-hardening/assets/templates/`）
 - husky 钩子已由 install-mechanism.js 自动注册（`node .husky/install.js --force`）
 
 ### 6. 重启 Codex + 验证
@@ -152,8 +153,7 @@ integrations/
 │   ├── spec-contract.md       ← 11 条机制契约（按项目裁剪）
 │   └── openspec-sync-check.js ← 归档三同步检查
 └── project/
-    ├── AGENTS.md.snippet      ← 分支分层 + 机制硬化片段
-    └── quality-gates.template.md
+    └── AGENTS.md.snippet      ← 分支分层 + 机制硬化片段（.quality-gates.md 由 ci-hardening 脚手架渲染，见 skills/other/ci-hardening/assets/templates/）
 ```
 
 ## 跨平台说明

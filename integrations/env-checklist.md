@@ -55,7 +55,7 @@ node integrations/install-mechanism.js <项目> --yes
 ## 5. 项目模板
 
 - [ ] `AGENTS.md.snippet` 合并进项目 AGENTS.md（分支分层/机制硬化）
-- [ ] `quality-gates.template.md` → 项目 `.quality-gates.md`
+- [ ] `.quality-gates.md` 由 ci-hardening 脚手架渲染生成（单一来源 `skills/other/ci-hardening/assets/templates/quality-gates.md.tpl`）
 - [ ] 按项目裁剪：QM 条款、测试命令、spec-contract 中的项目背景
 
 ## 6. 重启 Codex（技能加载）

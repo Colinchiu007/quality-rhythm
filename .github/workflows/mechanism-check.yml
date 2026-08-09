@@ -44,3 +44,10 @@ jobs:
       - name: Verify gate re-run (post-init)
         run: |
           node "$GITHUB_WORKSPACE/integrations/verify-env.js" /tmp/mech-ci-smoke
+
+      - name: ci-hardening drift contract (rendered vs template, no placeholders)
+        run: |
+          node "$GITHUB_WORKSPACE/skills/other/ci-hardening/scripts/apply-ci-hardening.js" --repo /tmp/mech-ci-smoke --dry-run
+          if grep -E "{{[A-Z_]+}}" /tmp/mech-ci-smoke/.github/workflows/quality-gate.yml; then echo "FAIL: unresolved {{VARS}} placeholders remain"; exit 1; fi
+          if grep -q "branches-ignore" /tmp/mech-ci-smoke/.github/workflows/quality-gate.yml; then echo "FAIL: legacy double-trigger"; exit 1; fi
+          grep -q "static-gates" /tmp/mech-ci-smoke/.github/workflows/quality-gate.yml || { echo "FAIL: missing static-gates job"; exit 1; }

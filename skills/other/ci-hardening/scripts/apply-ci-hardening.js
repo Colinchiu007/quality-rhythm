@@ -16,18 +16,20 @@ const path = require('path');
 const SKILL_ROOT = path.resolve(__dirname, '..');
 const TEMPLATE_DIR = path.join(SKILL_ROOT, 'assets', 'templates');
 
+// 中性默认值（跨项目通用）；项目特有路径/命令通过 ci-hardening.config.json 覆盖。
+// Multi-Publish 参考覆盖示例见 references/methodology.md「新项目应用」。
 const DEFAULTS = {
   DEFAULT_BRANCH: 'main',
-  RUNNER_OS: 'windows-latest',
+  RUNNER_OS: 'ubuntu-latest',
   NODE_VERSION: '22',
   PACKAGE_MANAGER: 'npm',
   INSTALL_CMD: 'npm ci',
-  TSC_CMD: 'cd apps/desktop && npx tsc --noEmit',
-  JS_SYNTAX_ROOT: 'apps/desktop/electron',
+  TSC_CMD: 'npx tsc --noEmit',
+  JS_SYNTAX_ROOT: 'src',
   SECRETS_SCAN_CMD: 'echo "add your secrets scan command"',
   IPC_CHECK_CMD: 'echo "add your ipc bridge check command"',
   UNIT_TIMEOUT: 40,
-  PM_BIN: 'npm.cmd',
+  PM_BIN: 'npm',
   UNIT_ARGS: '"run","test","--workspaces","--if-present"',
   STARTUP_SMOKE_CMD: 'echo "add your startup smoke command"',
   COVERAGE_CMD: 'echo "add your coverage command"',
@@ -39,9 +41,9 @@ const DEFAULTS = {
   ELECTRON_ARTIFACT: 'electron-v43.1.1-linux-x64.zip',
   ELECTRON_CHECKSUM: 'REPLACE_ME',
   ELECTRON_MIRROR: 'https://cdn.npmmirror.com/binaries/electron/',
-  ELECTRON_REBUILD_CMD: 'cd apps/desktop && npx @electron/rebuild -f -w better-sqlite3',
-  SKIP_ENV_LINE: 'SKIP_NATIVE_MEDIA_TOOL_TESTS: "1"',
-  VITEST_CMD: 'npm run test -w @multi-publish/desktop',
+  ELECTRON_REBUILD_CMD: 'npx @electron/rebuild -f -w <native-module>',
+  SKIP_ENV_LINE: '',
+  VITEST_CMD: 'npm test',
   DESKTOP_WORKSPACE_DIR: 'apps/desktop',
   TEST_COMMAND: 'npm test',
   COVERAGE_THRESHOLD: '40',
