@@ -117,6 +117,37 @@ Phase 5: 运营期 — 排查、性能、可观测、安全
 ci-hardening（CI/CD 硬化：runner 迁移、Quality Gate 并行化、触发去重、workflow 契约同步），
 覆盖从需求到运营的完整开发流程。详见 SKILL.md 第五章。
 
+### CI 硬化集成（ci-hardening）
+
+ci-hardening 是质量节拍内置的 **CI/CD 硬化子技能**（`skills/other/ci-hardening/`），
+把「CI 迁移判断、瓶颈实测、并行拆分、触发去重、契约同步」沉淀为跨项目可复用的
+方法与模板（源于 Multi-Publish 实战：electron-tests 迁移 GitHub runner、Quality Gate 25min→12min）。
+
+**触发场景**（说以下任意一句即自动路由）：
+- 「CI 太慢 / 排队久 / 优化 Quality Gate」→ 迁移判断 + 瓶颈实测
+- 「把 CI 从自托管/ECS runner 迁到 GitHub 官方 runner」→ 适配点核对 + 迁移验证
+- 「修改 / 新建 `.github/workflows/*.yml`」→ 全仓契约测试排查 + 结构同步（必做）
+- 「给新项目初始化质量门禁」→ 并行 quality-gate.yml + 本地 .quality-gates.md + 可选 electron-ci.yml
+
+**使用方式**（以质量节拍仓库根为 cwd）：
+
+```bash
+# 新项目门禁脚手架（生成并行 quality-gate.yml + .quality-gates.md + 可选 electron-ci.yml；--dry-run 预览）
+node skills/other/ci-hardening/scripts/apply-ci-hardening.js --repo <target> [--with-electron] [--dry-run]
+
+# 既有 CI 瓶颈实测（GitHub API steps 耗时分析）
+node skills/other/ci-hardening/scripts/analyze-ci-steps.js <run-id>
+```
+
+**与质量节拍的协同**：
+- **M4 三层门禁**：本地提交门禁（`.quality-gates.md` + husky pre-commit）→ 流程 skill（质量节拍 Phase 0-5）→ 远程 CI（GitHub Actions PR 触发）
+- **pre-commit 自动化**：`.husky/pre-commit.js` 自动执行 分支保护 + 测试存在性 + 语法检查（node --check）+ 密钥扫描，通过后自动在 `.quality-gates.md` 生成审计记录（无需人工勾选）
+- **一键分发**：`integrations/install-mechanism.js <项目> --yes` 会自动调用 ci-hardening 脚手架为新项目渲染门禁产物 + 复制斜杠命令（`.claude/commands/` 与 `.cursor/commands/`）
+
+**防漂移保障**：`.github/scripts/tpl-contract.test.js` 契约测试在 CI 中验证模板变量全覆盖、并行 QG 结构、触发去重、命令模板存在（`node --test .github/scripts/tpl-contract.test.js`）。
+
+详细方法论见 `skills/other/ci-hardening/references/methodology.md`；完整集成说明见 SKILL.md 第 5.7 节。
+
 ### Spec Kit 集成（quality-rhythm-sdd Preset）
 
 质量节拍通过 Spec Kit Preset 增强了 Spec-Driven Development 工作流，
