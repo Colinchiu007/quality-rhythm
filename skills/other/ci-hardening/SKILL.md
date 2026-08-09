@@ -13,12 +13,17 @@ description: "CI/CD 硬化与优化（自托管 runner 迁移、并行化、触�
 - 为新项目初始化质量门禁体系。
 
 ## 使用步骤
+
+> **路径说明**：本技能已并入质量节拍仓库（`skills/other/ci-hardening/`）。下方命令以技能目录为 cwd；若从质量节拍仓库根或其他位置调用，请使用完整路径：
+> - 技能目录：`node scripts/apply-ci-hardening.js ...`
+> - 质量节拍仓库根：`node skills/other/ci-hardening/scripts/apply-ci-hardening.js ...`
+
 1. **读方法论**：`references/methodology.md`（M1 迁移判断法 / M2 优化法 / M3 契约同步法 / M4 三层门禁 / M5 交付节奏 + 通用清单）。
 2. **初始化新项目门禁**（B+C 集成）：
    ```bash
    node scripts/apply-ci-hardening.js --repo <target> [--with-electron] [--dry-run]
    ```
-   生成：并行 `quality-gate.yml`（触发去重）+ `.quality-gates.md`（本地清单）+ 可选 `electron-ci.yml`。可在目标仓库放 `ci-hardening.config.json` 覆盖占位符（见脚本 DEFAULTS）。
+   生成：并行 `quality-gate.yml`（触发去重）+ `.quality-gates.md`（本地清单）+ 可选 `electron-ci.yml`。可在目标仓库放 `ci-hardening.config.json` 覆盖占位符（见脚本 DEFAULTS）。`install-mechanism.js` 会自动调用本脚手架为新项目渲染门禁产物。
 3. **优化既有 CI**：先 `node scripts/analyze-ci-steps.js <run-id>` 实测瓶颈（M2），再并行拆分。
 4. **契约同步（必做）**：改 workflow 前全仓 grep 契约测试（`.github/scripts/*.test.js` 与 `*/tests/*.test.js`），改结构后本地跑通再推 CI。
 5. **Electron 注意**：`@electron/rebuild` 必须在 vitest（Node ABI）之后、Electron 冒烟之前；保留 checksum pin 与镜像。
