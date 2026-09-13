@@ -974,12 +974,16 @@ Phase 结束:
 
 ```
 Step ④ 审查：
-  - 代码风格与项目一致？
-  - 命名符合规范？
-  - 没有硬编码？
-  - 异常处理完整？
-  - 权限正确？
-  - 事务一致？
+  1. 自审（既有）：代码风格/命名/硬编码/异常/权限/事务
+  2. ★ CCG 双模型外部审查（强制，M+ 复杂度或中/高风险任务）：
+     - 用 codeagent-wrapper 并行启动两个后端模型审查实现 diff（run_in_background: true，同一条消息两个调用）：
+       codeagent-wrapper --backend claude --lite "审查 <change> 实现：正确性/边界/安全/规格合规" <workdir>
+       codeagent-wrapper --backend opencode --lite "审查 <change> 实现：命名/模式/可维护性/集成" <workdir>
+     - 后端/前端模型由 .ccg/config.toml [routing] 配置决定；前端失败最多重试 2 次（间隔 5 秒），3 次全败才跳过；后端结果必须等待
+     - 两个模型各返回 JSON findings（severity: Critical/Warning/Info）
+     - Critical 必须修复（含回归保护测试）；Warning 评估后修复（数据校验/安全类必须修复）
+     - 评审记录写入 .quality-gates.md
+  3. 审查通过 → 进入全量测试
 
 Step ⑥ 协作质量：
   - 我给了 AI 什么上下文？
@@ -1790,6 +1794,7 @@ Phase 2 门禁（增强）：
   [ ] Completeness 评分 ≥ 7/10
   [ ] 日常循环 7 步完整执行
   [ ] 代码审查无 CRITICAL 问题
+  [ ] ★ CCG 双模型外部评审通过（M+ 复杂度/中高风险任务；claude 后端 + opencode 前端并行，Critical 已修复）
   [ ] 测试覆盖 >= 3 场景/模块
   [ ] API Key 无硬编码（/cso）
   [ ] CI 流水线通过（push 后 gh run list 确认 success）
