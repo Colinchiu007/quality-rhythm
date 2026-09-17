@@ -799,7 +799,9 @@ cp rules/<framework>.mdc .cursorrules
 质量节拍是**流程门禁层**，与另外两层机制协同：
 
 ```
-CCG（决策/执行编排）  →  怎么分析、谁来做、做到哪（~/.codex/AGENTS.md + .ccg/tasks）
+CCG（决策/执行编排）  →  怎么分析、谁来做、做到哪
+   - 标准运行时（提供 codeagent-wrapper 的平台）：~/.codex/AGENTS.md + .ccg/tasks
+   - 其他 agent 平台：由平台等价机制承载（双模型/多子代理并行审查 + 任务追踪）
 质量节拍（本 skill）  →  什么节奏、过什么门禁（Phase 0-5 + QM + .quality-gates.md）
 OpenSpec（规格工件）  →  规格写成什么、如何追踪（openspec/ + /opsx:* 命令）
 ```
@@ -811,7 +813,7 @@ OpenSpec（规格工件）  →  规格写成什么、如何追踪（openspec/ +
 - 归档三同步：openspec archive + CCG task 归档 + 质量节拍复盘（scripts/openspec-sync-check.js 检查）
 - 分层分支策略：运行时代码走分支+PR；纯流程/文档可 main 小步提交
 
-**新环境安装（一键整合包 `integrations/`）：**
+**新环境安装（一键整合包 `integrations/`，仅当平台使用 Codex Mode 即提供 `codeagent-wrapper` 时执行；无该 CLI 的平台跳过，改用本平台等价机制）：**
 ```bash
 npx ccg-workflow                            # CCG（官方，选 Codex Mode）+ 追加 ccg/codex-overlay.md
 node integrations/bootstrap-env.js --yes    # 用户级一键：fastctx/codegraph 安装 + config.toml 合并
@@ -976,11 +978,18 @@ Phase 结束:
 Step ④ 审查：
   1. 自审（既有）：代码风格/命名/硬编码/异常/权限/事务
   2. ★ CCG 双模型外部审查（强制，M+ 复杂度或中/高风险任务）：
-     - 用 codeagent-wrapper 并行启动两个后端模型审查实现 diff（run_in_background: true，同一条消息两个调用）：
-       codeagent-wrapper --backend claude --lite "审查 <change> 实现：正确性/边界/安全/规格合规" <workdir>
-       codeagent-wrapper --backend opencode --lite "审查 <change> 实现：命名/模式/可维护性/集成" <workdir>
-     - 后端/前端模型由 .ccg/config.toml [routing] 配置决定；前端失败最多重试 2 次（间隔 5 秒），3 次全败才跳过；后端结果必须等待
-     - 两个模型各返回 JSON findings（severity: Critical/Warning/Info）
+     - 执行通道按「当前 agent 平台能力」选择，不绑定特定 CLI：
+       (a) 平台提供 codeagent-wrapper 时：并行启动两个后端模型审查实现 diff（run_in_background: true，同一条消息两个调用）：
+           - 定位 CLI：优先 `command -v codeagent-wrapper`；若未命中，回退标准安装位置 `$HOME/.claude/bin/codeagent-wrapper`（codeagent-wrapper 自身惯例安装目录）。命中其一即使用该绝对路径调用，禁止因 PATH 未暴露而误判"未提供"并跳到 (b)
+           <CLI> --backend claude --lite "审查 <change> 实现：正确性/边界/安全/规格合规" <workdir>
+           <CLI> --backend opencode --lite "审查 <change> 实现：命名/模式/可维护性/集成" <workdir>
+           后端/前端模型路由由 .ccg/config.toml [routing] 决定；前端失败最多重试 2 次（间隔 5 秒），3 次全败才跳过；后端结果必须等待
+       (b) 平台未提供 codeagent-wrapper 时（必须走此分支，禁止退化单模型自审）：
+           改调该平台等价的「双模型/多子代理并行审查」机制（由各平台桥接 skill 提供），
+           并行派两个独立审查视角（如：后端视角 + 前端视角），各返回 JSON findings
+           平台等价机制可叠加该平台的 CCG 质量门禁工具（如静态 verify-* 检查）作为补充；
+           任务追踪由各平台等价机制承载（如 TaskCreate / 平台任务系统），不依赖 .ccg/tasks；其 findings 一并回写 .quality-gates.md
+     - 两路审查各返回 JSON findings（severity: Critical/Warning/Info）
      - Critical 必须修复（含回归保护测试）；Warning 评估后修复（数据校验/安全类必须修复）
      - 评审记录写入 .quality-gates.md
   3. 审查通过 → 进入全量测试
@@ -1794,7 +1803,8 @@ Phase 2 门禁（增强）：
   [ ] Completeness 评分 ≥ 7/10
   [ ] 日常循环 7 步完整执行
   [ ] 代码审查无 CRITICAL 问题
-  [ ] ★ CCG 双模型外部评审通过（M+ 复杂度/中高风险任务；claude 后端 + opencode 前端并行，Critical 已修复）
+  [ ] ★ CCG 双模型外部评审通过（M+ 复杂度/中高风险任务；双模型并行审查已实现 + findings 已回写 .quality-gates.md + Critical 已修复）
+        ※ 硬门禁：未实际执行双模型外部审查（或平台等价机制 fallback (b)）或 findings 未回写 .quality-gates.md → 本门禁不通过，禁止进入下一 Phase
   [ ] 测试覆盖 >= 3 场景/模块
   [ ] API Key 无硬编码（/cso）
   [ ] CI 流水线通过（push 后 gh run list 确认 success）
